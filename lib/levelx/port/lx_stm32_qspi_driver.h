@@ -1,0 +1,232 @@
+/**************************************************************************/
+/*                                                                        */
+/*       Copyright (c) Microsoft Corporation. All rights reserved.        */
+/*                                                                        */
+/*       This software is licensed under the Microsoft Software License   */
+/*       Terms for Microsoft Azure RTOS. Full text of the license can be  */
+/*       found in the LICENSE file at https://aka.ms/AzureRTOS_EULA       */
+/*       and in the root directory of this software.                      */
+/*                                                                        */
+/**************************************************************************/
+
+#ifndef LX_STM32_QSPI_DRIVER_H
+#define LX_STM32_QSPI_DRIVER_H
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+/* Includes ------------------------------------------------------------------*/
+#include "lx_api.h"
+#include "stm32h7xx_hal.h"
+
+  /* USER CODE BEGIN Includes */
+
+  /* USER CODE END Includes */
+
+  /* Exported types ------------------------------------------------------------*/
+  /* USER CODE BEGIN ET */
+
+  /* USER CODE END ET */
+
+  extern QSPI_HandleTypeDef hqspi;
+
+  /* The following semaphore is being to notify about RX/TX completion. It needs to be released in the transfer callbacks */
+  extern TX_SEMAPHORE qspi_tx_semaphore;
+  extern TX_SEMAPHORE qspi_rx_semaphore;
+
+#define qspi_handle hqspi
+
+/* Exported constants --------------------------------------------------------*/
+
+/* the QuadSPI instance, default value set to 0 */
+#define LX_STM32_QSPI_INSTANCE 0
+
+#define LX_STM32_QSPI_BASE_ADDRESS 0
+
+#define LX_STM32_QSPI_DEFAULT_TIMEOUT 10 * TX_TIMER_TICKS_PER_SECOND
+#define LX_STM32_DEFAULT_SECTOR_SIZE  LX_STM32_QSPI_SECTOR_SIZE
+
+/* Use the QSPI DMA API */
+#define LX_STM32_QSPI_DMA_API 1
+
+/* when set to 1 LevelX is initializing the QuadSPI memory,
+ * otherwise it is the up to the application to perform it.
+ */
+#define LX_STM32_QSPI_INIT 1
+
+/* allow the driver to fully erase the QuadSPI chip. This should be used carefully.
+ * the call is blocking and takes a while. by default it is set to 0.
+ */
+#define LX_STM32_QSPI_ERASE 1
+
+  /* USER CODE BEGIN EC */
+
+  /* USER CODE END EC */
+
+  /* Exported macro ------------------------------------------------------------*/
+  /* USER CODE BEGIN EM */
+
+  /* USER CODE END EM */
+
+#define LX_STM32_QSPI_CURRENT_TIME tx_time_get
+
+  /* Macro called after initializing the QSPI driver
+   * e.g. create a semaphore used for transfer notification */
+  /* USER CODE BEGIN LX_STM32_QSPI_POST_INIT */
+
+#define LX_STM32_QSPI_POST_INIT()                                                                                                                                                         \
+  do                                                                                                                                                                                      \
+  {                                                                                                                                                                                       \
+    if (tx_semaphore_create(&qspi_tx_semaphore, "qspi rx transfer semaphore", 0) != TX_SUCCESS || tx_semaphore_create(&qspi_rx_semaphore, "qspi tx transfer semaphore", 0) != TX_SUCCESS) \
+    {                                                                                                                                                                                     \
+      return LX_ERROR;                                                                                                                                                                    \
+    }                                                                                                                                                                                     \
+  } while (0)
+
+  /* USER CODE END LX_STM32_QSPI_POST_INIT */
+
+  /* Macro called before performing read operation */
+  /* USER CODE BEGIN LX_STM32_QSPI_PRE_READ_TRANSFER */
+
+#define LX_STM32_QSPI_PRE_READ_TRANSFER(__status__)
+
+  /* USER CODE END LX_STM32_QSPI_PRE_READ_TRANSFER */
+
+  /* Define how to notify about Read completion operation */
+  /* USER CODE BEGIN LX_STM32_QSPI_READ_CPLT_NOTIFY */
+
+#define LX_STM32_QSPI_READ_CPLT_NOTIFY(__status__)                                          \
+  do                                                                                        \
+  {                                                                                         \
+    if (tx_semaphore_get(&qspi_rx_semaphore, HAL_QSPI_TIMEOUT_DEFAULT_VALUE) != TX_SUCCESS) \
+    {                                                                                       \
+      __status__ = LX_ERROR;                                                                \
+    }                                                                                       \
+  } while (0)
+
+  /* USER CODE END LX_STM32_QSPI_READ_CPLT_NOTIFY */
+
+  /* Macro called after performing read operation */
+  /* USER CODE BEGIN LX_STM32_QSPI_POST_READ_TRANSFER */
+
+#define LX_STM32_QSPI_POST_READ_TRANSFER(__status__)
+
+  /* USER CODE END LX_STM32_QSPI_POST_READ_TRANSFER */
+
+  /* Macro for read error handling */
+  /* USER CODE BEGIN LX_STM32_QSPI_READ_TRANSFER_ERROR */
+
+#define LX_STM32_QSPI_READ_TRANSFER_ERROR(__status__)
+
+  /* USER CODE END LX_STM32_QSPI_READ_TRANSFER_ERROR */
+
+  /* Macro called before performing write operation */
+  /* USER CODE BEGIN LX_STM32_QSPI_PRE_WRITE_TRANSFER */
+
+#define LX_STM32_QSPI_PRE_WRITE_TRANSFER(__status__)
+
+  /* USER CODE END LX_STM32_QSPI_PRE_WRITE_TRANSFER */
+
+  /* Define how to notify about write completion operation */
+  /* USER CODE BEGIN LX_STM32_QSPI_WRITE_CPLT_NOTIFY */
+
+#define LX_STM32_QSPI_WRITE_CPLT_NOTIFY(__status__)                                         \
+  do                                                                                        \
+  {                                                                                         \
+    if (tx_semaphore_get(&qspi_tx_semaphore, HAL_QSPI_TIMEOUT_DEFAULT_VALUE) != TX_SUCCESS) \
+    {                                                                                       \
+      __status__ = LX_ERROR;                                                                \
+    }                                                                                       \
+  } while (0)
+  /* USER CODE END LX_STM32_QSPI_WRITE_CPLT_NOTIFY */
+
+  /* Macro called after performing write operation */
+  /* USER CODE BEGIN LX_STM32_QSPI_POST_WRITE_TRANSFER */
+
+#define LX_STM32_QSPI_POST_WRITE_TRANSFER(__status__)
+
+  /* USER CODE END LX_STM32_QSPI_POST_WRITE_TRANSFER */
+
+  /* Macro for write error handling */
+  /* USER CODE BEGIN LX_STM32_QSPI_WRITE_TRANSFER_ERROR */
+
+#define LX_STM32_QSPI_WRITE_TRANSFER_ERROR(__status__)
+
+  /* USER CODE END LX_STM32_QSPI_WRITE_TRANSFER_ERROR */
+
+  /* Exported functions prototypes ---------------------------------------------*/
+  INT lx_stm32_qspi_lowlevel_init(UINT instance);
+  INT lx_stm32_qspi_lowlevel_deinit(UINT instance);
+
+  INT lx_stm32_qspi_get_status(UINT instance);
+  INT lx_stm32_qspi_get_info(UINT instance, ULONG* block_size, ULONG* total_blocks);
+
+  INT lx_stm32_qspi_read(UINT instance, ULONG* address, ULONG* buffer, ULONG words);
+  INT lx_stm32_qspi_write(UINT instance, ULONG* address, ULONG* buffer, ULONG words);
+
+  INT lx_stm32_qspi_erase(UINT instance, ULONG block, ULONG erase_count, UINT full_chip_erase);
+  INT lx_stm32_qspi_is_block_erased(UINT instance, ULONG block);
+
+  UINT lx_qspi_driver_system_error(UINT error_code);
+
+  UINT lx_stm32_qspi_initialize(LX_NOR_FLASH* nor_flash);
+
+#if (LX_STM32_QSPI_INIT == 1)
+  extern void MX_QUADSPI_Init(void);
+  #define qspi_driver_init() MX_QUADSPI_Init()
+#endif
+
+  /* USER CODE BEGIN EFP */
+
+  /* USER CODE END EFP */
+
+  /* Private defines -----------------------------------------------------------*/
+  /* USER CODE BEGIN PD */
+
+  /* USER CODE END PD */
+
+  /* USER CODE BEGIN CUSTOM_QSPI */
+#define LX_STM32_QSPI_SECTOR_SIZE                0x1000      // 4KB 扇区
+#define LX_STM32_QSPI_FLASH_SIZE                 0x2000000   // 32MB (256Mbit)
+#define LX_STM32_QSPI_STATUS_REG_READY           0x01        // Status Register-1 BUSY bit (S0) = 0 表示就绪
+#define LX_STM32_QSPI_DUMMY_CYCLES_READ_QUAD_STR 8           // Quad I/O 读取时的 dummy cycles（建议值，可调整）
+#define LX_STM32_QSPI_BULK_ERASE_MAX_TIME        400000      // 整片擦除最大时间（单位：ms，规格书中为 400s，这里转换为 400000ms）
+#define LX_STM32_QSPI_DUMMY_CYCLES_READ_QUAD     8           // Quad Output 读取时的 dummy cycles
+#define LX_STM32_QSPI_PAGE_SIZE                  256         // 页大小为 256 字节
+#define LX_STM32_QSPI_DIE_ERASE_MAX_TIME         2000        // 64KB 块擦除最大时间（单位：ms，规格书中为 2s）
+#define LX_STM32_QSPI_SECTOR_ERASE_MAX_TIME      400         // 4KB 扇区擦除最大时间（单位：ms）
+#define LX_STM32_QSPI_VCR_NB_DUMMY               4           // 用于某些读取模式的 dummy cycles
+#define LX_STM32_QSPI_SR_WREN                    0x01        // Status Register Write Enable Latch (WEL) 位
+#define LX_STM32_QSPI_SR_WEN                     0x01        // 同 SR_WREN
+#define LX_STM32_QSPI_SR_WIP                     0x01        // Status Register BUSY (WIP) 位
+#define LX_STM32_QSPI_BULK_ERASE_CMD             0xC7        // 整片擦除指令（也可用 0x60）
+
+// 指令集定义
+#define LX_STM32_QSPI_GET_STATUS_REG_CMD         0x05   // 读取状态寄存器-1
+#define LX_STM32_QSPI_QUAD_INOUT_FAST_READ_CMD   0xEB   // Fast Read Quad I/O (EBh)
+#define LX_STM32_QSPI_QUAD_IN_FAST_PROG_CMD      0x32   // Quad Input Page Program (32h)
+#define LX_STM32_QSPI_DIE_ERASE_CMD              0xD8   // 64KB Block Erase (D8h)
+#define LX_STM32_QSPI_SECTOR_ERASE_CMD           0x20   // Sector Erase (4KB) (20h)
+#define LX_STM32_QSPI_RESET_ENABLE_CMD           0x66   // Enable Reset (66h)
+#define LX_STM32_QSPI_RESET_MEMORY_CMD           0x99   // Reset Device (99h)
+#define LX_STM32_QSPI_READ_VOL_CFG_REG_CMD       0x85   // 可选：读取非易失性配置寄存器（若支持）
+#define LX_STM32_QSPI_WRITE_VOL_CFG_REG_CMD      0x81   // 可选：写入非易失性配置寄存器（若支持）
+#define LX_STM32_QSPI_WRITE_ENABLE_CMD           0x06   // Write Enable (06h)
+#define LX_STM32_QSPI_READ_STATUS_REG_CMD        0x05   // Read Status Register-1 (05h)
+#define LX_STM32_QSPI_ENTER_QUAD_CMD             0x35   // 可选：通过写状态寄存器2使能 QE 位（需先 Write Enable）
+#define LX_STM32_QSPI_ENTER_4_BYTE_ADDR_MODE_CMD 0xB7   // Enter 4-Byte Address Mode (B7h)
+#define LX_STM32_QSPI_SUBSECTOR_ERASE_CMD        0x20   // 子扇区擦除（4KB）
+#define LX_STM32_QSPI_RESET_MAX_TIME             30     // 软件复位最大时间（单位：us）
+#define LX_STM32_QSPI_AUTOPOLLING_INTERVAL_TIME  10     // 自动轮询间隔（单位：ms）
+  /* USER CODE END CUSTOM_QSPI */
+
+  /* USER CODE BEGIN 1 */
+
+  /* USER CODE END 1 */
+
+#ifdef __cplusplus
+}
+#endif
+#endif /* LX_STM32_QSPI_DRIVER_H */
