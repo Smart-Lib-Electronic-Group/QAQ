@@ -31,25 +31,25 @@ public:
     return instance;
   }
 
-  char* malloc(uint32_t size)
+  char* allocate(uint32_t size)
   {
     void* ptr = nullptr;
 
     if (size <= 32)
     {
-      ptr = m_small_pool.malloc();
+      ptr = m_small_pool.allocate();
     }
     else if (size <= 64)
     {
-      ptr = m_medium_pool.malloc();
+      ptr = m_medium_pool.allocate();
     }
     else if (size <= 128)
     {
-      ptr = m_large_pool.malloc();
+      ptr = m_large_pool.allocate();
     }
     else
     {
-      ptr = m_huge_pool.malloc(size);
+      ptr = m_huge_pool.allocate(size);
     }
 
     return static_cast<char*>(ptr);
@@ -57,7 +57,7 @@ public:
 
   std::atomic<uint32_t>* counter_malloc(void)
   {
-    return m_counter_pool.malloc();
+    return m_counter_pool.allocate();
   }
 
   uint32_t get_capacity(uint32_t size) const
@@ -80,32 +80,32 @@ public:
     }
   }
 
-  void free(char* ptr, uint32_t size)
+  void deallocate(char* ptr, uint32_t size)
   {
     if (nullptr != ptr)
     {
       if (size <= 32)
       {
-        m_small_pool.free(static_cast<void*>(ptr));
+        m_small_pool.deallocate(static_cast<void*>(ptr));
       }
       else if (size <= 64)
       {
-        m_medium_pool.free(static_cast<void*>(ptr));
+        m_medium_pool.deallocate(static_cast<void*>(ptr));
       }
       else if (size <= 128)
       {
-        m_large_pool.free(static_cast<void*>(ptr));
+        m_large_pool.deallocate(static_cast<void*>(ptr));
       }
       else
       {
-        m_huge_pool.free(static_cast<void*>(ptr));
+        m_huge_pool.deallocate(static_cast<void*>(ptr));
       }
     }
   }
 
   void counter_free(std::atomic<uint32_t>* ptr)
   {
-    m_counter_pool.free(ptr);
+    m_counter_pool.deallocate(ptr);
   }
 };
 } /* namespace qstring_internal */

@@ -12,25 +12,25 @@ extern void       Error_Handler();
 void v_port_eth_reset_pin_init(void)
 {
   GPIO_InitTypeDef GPIO_InitStruct = { 0 };
-  __HAL_RCC_GPIOB_CLK_ENABLE();
+  __HAL_RCC_GPIOH_CLK_ENABLE();
   GPIO_InitStruct.Mode  = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pin   = GPIO_PIN_12;
+  GPIO_InitStruct.Pin   = GPIO_PIN_8;
   GPIO_InitStruct.Pull  = GPIO_PULLUP;
   GPIO_InitStruct.Speed = GPIO_SPEED_FAST;
-  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOH, &GPIO_InitStruct);
 }
 
 void v_port_eth_reset(void)
 {
-  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOH, GPIO_PIN_8, GPIO_PIN_RESET);
   tx_thread_sleep(1000);
-  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(GPIOH, GPIO_PIN_8, GPIO_PIN_SET);
   tx_thread_sleep(1000);
 }
 
 void v_port_eth_reset_pin_deinit(void)
 {
-  HAL_GPIO_DeInit(GPIOB, GPIO_PIN_8);
+  HAL_GPIO_DeInit(GPIOH, GPIO_PIN_8);
 }
 
 void v_port_eth_init(void)

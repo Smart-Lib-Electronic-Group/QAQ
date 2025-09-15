@@ -51,7 +51,7 @@ template <system::device::Stream_Type Type, typename Server, typename Client>
 class Tcp_Server_Client_Base : protected Tcp_Socket<Tcp_Server_Client_Base<Type, Server, Client>>
 {
   // 禁止拷贝和移动
-  NO_COPY_MOVE(Tcp_Server_Client_Base)
+  QAQ_NO_COPY_MOVE(Tcp_Server_Client_Base)
 
 private:
   /// @brief 服务器客户端 连接标志
@@ -246,7 +246,7 @@ protected:
    * @param  param          参数
    * @return uint32_t       值
    */
-  const uint32_t get_config_handler(uint32_t param)
+  uint32_t get_config_handler(uint32_t param) const
   {
     uint32_t ret = 0;
 
@@ -516,7 +516,7 @@ class Tcp_Server_Client<system::device::Stream_Type::READ_ONLY, Base_Device, Ser
   static_assert(Base_Device::type() == system::device::Device_Type::STREAMING, "TCP Client must be streaming device");
 
   // 禁止拷贝和移动
-  NO_COPY_MOVE(Tcp_Server_Client)
+  QAQ_NO_COPY_MOVE(Tcp_Server_Client)
 
   /// @brief 友元声明 服务器客户端 基类
   template <system::device::Stream_Type Type, typename Tcp_Server, typename Client>
@@ -622,7 +622,7 @@ class Tcp_Server_Client<system::device::Stream_Type::WRITE_ONLY, Base_Device, Se
   static_assert(Base_Device::type() == system::device::Device_Type::STREAMING, "TCP Client must be streaming device");
 
   // 禁止拷贝和移动
-  NO_COPY_MOVE(Tcp_Server_Client)
+  QAQ_NO_COPY_MOVE(Tcp_Server_Client)
 
   /// @brief 服务器客户端 基类类型
   using Base = Tcp_Server_Client_Base<system::device::Stream_Type::WRITE_ONLY, Server, Tcp_Server_Client<system::device::Stream_Type::WRITE_ONLY, Base_Device, Server>>;
@@ -744,7 +744,7 @@ class Tcp_Server_Client<system::device::Stream_Type::READ_WRITE, Base_Device, Se
   static_assert(Base_Device::type() == system::device::Device_Type::STREAMING, "TCP Client must be streaming device");
 
   // 禁止拷贝和移动
-  NO_COPY_MOVE(Tcp_Server_Client)
+  QAQ_NO_COPY_MOVE(Tcp_Server_Client)
 
   /// @brief 服务器客户端 基类类型
   using Base = Tcp_Server_Client_Base<system::device::Stream_Type::READ_WRITE, Server, Tcp_Server_Client<system::device::Stream_Type::READ_WRITE, Base_Device, Server>>;
@@ -813,7 +813,7 @@ private:
    * @param  param          参数
    * @return uint32_t       值
    */
-  const uint32_t get_config_impl(uint32_t param) override
+  uint32_t get_config_impl(uint32_t param) const override
   {
     return Base::get_config_handler(param);
   }

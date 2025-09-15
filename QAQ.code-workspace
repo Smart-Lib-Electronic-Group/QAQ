@@ -107,7 +107,7 @@
             "editor.autoIndent": "advanced"
         },
         "cortex-debug.variableUseNaturalFormat": true,
-        "commentTranslate.multiLineMerge": true,
+        "commentTranslate.multiLineMerge": false,
         "commentTranslate.source": "Bing"
     },
     "extensions": {

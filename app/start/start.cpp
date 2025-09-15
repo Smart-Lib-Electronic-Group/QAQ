@@ -13,6 +13,7 @@
 #include "tcp.hpp"
 
 #include "qstring.hpp"
+#include "tiered_memory_pool.hpp"
 
 using namespace QAQ::base::gpio;
 using namespace QAQ::base::uart;
@@ -116,7 +117,7 @@ idle_task idle;
 Uart1 uart1;
 // Uart2 uart2;
 
-uint8_t buffer[1500] ALIGN(32);
+uint8_t buffer[1500] QAQ_ALIGN(32);
 
 void uart_receive_complete(system_internal::device_internal::IODevice_Base* device)
 {
@@ -141,7 +142,7 @@ Server   server;
 
 void connected(Server::Device* client)
 {
-  SEGGER_RTT_printf(0, "connected\n");
+  QAQ_INFO_INFO();
 }
 
 void received(Server::Device* client)
@@ -163,11 +164,18 @@ void received(Server::Device* client)
 
 void disconnected(Server::Device* client)
 {
-  SEGGER_RTT_printf(0, "disconnected\n");
+  QAQ_INFO_LOG("disconnected\n");
+}
+
+void log_output(const char* str, uint32_t size)
+{
+  SEGGER_RTT_printf(0, "%s", str);
 }
 
 void led_task(int)
 {
+  System_Monitor::set_output_func(log_output);
+
   // ret = fx_media_format(&qspi_media, fx_stm32_levelx_nor_driver, (VOID*)LX_NOR_QSPI_DRIVER_ID, (UCHAR*)fx_nor_qspi_media_memory, sizeof(fx_nor_qspi_media_memory), FX_NOR_QSPI_VOLUME_NAME, FX_NOR_QSPI_NUMBER_OF_FATS, 32, FX_NOR_QSPI_HIDDEN_SECTORS, ((LX_STM32_QSPI_FLASH_SIZE - LX_STM32_QSPI_SECTOR_SIZE) / FX_NOR_QSPI_SECTOR_SIZE), FX_NOR_QSPI_SECTOR_SIZE, 8, 1, 1);
 
   // ret = fx_media_open(&qspi_media, FX_NOR_QSPI_VOLUME_NAME, fx_stm32_levelx_nor_driver, (VOID*)LX_NOR_QSPI_DRIVER_ID, (VOID*)fx_nor_qspi_media_memory, sizeof(fx_nor_qspi_media_memory));

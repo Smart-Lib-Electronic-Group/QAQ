@@ -27,7 +27,7 @@ template <>
 class Object<0, false> : public system_internal::object_internal::Object_Base
 {
   // 禁止拷贝和移动
-  NO_COPY_MOVE(Object)
+  QAQ_NO_COPY_MOVE(Object)
 
 protected:
   /**
@@ -51,7 +51,7 @@ template <>
 class Object<0, true> : public system_internal::object_internal::Object_Base
 {
   // 禁止拷贝和移动
-  NO_COPY_MOVE(Object)
+  QAQ_NO_COPY_MOVE(Object)
 
 protected:
   /**
@@ -82,7 +82,7 @@ template <uint32_t Queue_Size>
 class Object<Queue_Size, false> : public system_internal::object_internal::Object_Base
 {
   // 禁止拷贝和移动
-  NO_COPY_MOVE(Object)
+  QAQ_NO_COPY_MOVE(Object)
 
 private:
   /// @brief 信号数据类型
@@ -194,7 +194,7 @@ template <uint32_t Queue_Size>
 class Object<Queue_Size, true> : public system_internal::object_internal::Object_Base
 {
   // 禁止拷贝和移动
-  NO_COPY_MOVE(Object)
+  QAQ_NO_COPY_MOVE(Object)
 
 private:
   /// @brief 信号数据类型

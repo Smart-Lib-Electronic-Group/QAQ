@@ -204,14 +204,14 @@ class Uart_Get_Config
   friend class Uart_Base;
 
   /// @brief 目标 Uart 对象引用
-  T& uart;
+  const T& uart;
 
   /**
    * @brief 构造函数
    *
    * @param uart 目标 Uart 对象引用
    */
-  explicit Uart_Get_Config(T& uart) : uart(uart) {}
+  explicit Uart_Get_Config(const T& uart) : uart(uart) {}
 
   /**
    * @brief 析构函数
@@ -224,7 +224,7 @@ public:
    *
    * @return uint32_t 波特率
    */
-  uint32_t baud_rate()
+  uint32_t baud_rate() const
   {
     return uart.get_config(Uart_Config_Code::Baud_Rate);
   }
@@ -235,7 +235,7 @@ public:
    * @param  baud_rate        波特率引用
    * @return Uart_Get_Config& 配置接口引用
    */
-  Uart_Get_Config& baud_rate(uint32_t& baud_rate)
+  Uart_Get_Config& baud_rate(uint32_t& baud_rate) const
   {
     baud_rate = uart.get_config(Uart_Config_Code::Baud_Rate);
     return *this;
@@ -246,7 +246,7 @@ public:
    *
    * @return uint32_t 数据位
    */
-  uint32_t data_bits()
+  uint32_t data_bits() const
   {
     return uart.get_config(Uart_Config_Code::Data_Bits);
   }
@@ -257,7 +257,7 @@ public:
    * @param  data_bits        数据位引用
    * @return Uart_Get_Config& 配置接口引用
    */
-  Uart_Get_Config& data_bits(uint32_t& data_bits)
+  Uart_Get_Config& data_bits(uint32_t& data_bits) const
   {
     data_bits = uart.get_config(Uart_Config_Code::Data_Bits);
     return *this;
@@ -268,7 +268,7 @@ public:
    *
    * @return uint32_t 停止位
    */
-  uint32_t stop_bits()
+  uint32_t stop_bits() const
   {
     return uart.get_config(Uart_Config_Code::Stop_Bits);
   }
@@ -279,7 +279,7 @@ public:
    * @param  stop_bits        停止位引用
    * @return Uart_Get_Config& 配置接口引用
    */
-  Uart_Get_Config& stop_bits(uint32_t& stop_bits)
+  Uart_Get_Config& stop_bits(uint32_t& stop_bits) const
   {
     stop_bits = uart.get_config(Uart_Config_Code::Stop_Bits);
     return *this;
@@ -290,7 +290,7 @@ public:
    *
    * @return uint32_t 校验位
    */
-  uint32_t parity()
+  uint32_t parity() const
   {
     return uart.get_config(Uart_Config_Code::Parity);
   }
@@ -301,7 +301,7 @@ public:
    * @param  parity           校验位引用
    * @return Uart_Get_Config& 配置接口引用
    */
-  Uart_Get_Config& parity(uint32_t& parity)
+  Uart_Get_Config& parity(uint32_t& parity) const
   {
     parity = uart.get_config(Uart_Config_Code::Parity);
     return *this;
@@ -312,7 +312,7 @@ public:
    *
    * @return uint32_t 中断优先级
    */
-  uint32_t interrupt_priority()
+  uint32_t interrupt_priority() const
   {
     return uart.get_config(Uart_Config_Code::Interrupt_Priority);
   }
@@ -323,7 +323,7 @@ public:
    * @param  interrupt_priority   中断优先级引用
    * @return Uart_Get_Config&     配置接口引用
    */
-  Uart_Get_Config& interrupt_priority(uint32_t& interrupt_priority)
+  Uart_Get_Config& interrupt_priority(uint32_t& interrupt_priority) const
   {
     interrupt_priority = uart.get_config(Uart_Config_Code::Interrupt_Priority);
     return *this;
@@ -334,7 +334,7 @@ public:
    *
    * @return uint32_t 中断子优先级
    */
-  uint32_t interrupt_sub_priority()
+  uint32_t interrupt_sub_priority() const
   {
     return uart.get_config(Uart_Config_Code::Interrupt_Sub_Priority);
   }
@@ -345,7 +345,7 @@ public:
    * @param  interrupt_sub_priority   中断子优先级引用
    * @return Uart_Get_Config&         配置接口引用
    */
-  Uart_Get_Config& interrupt_sub_priority(uint32_t& interrupt_sub_priority)
+  Uart_Get_Config& interrupt_sub_priority(uint32_t& interrupt_sub_priority) const
   {
     interrupt_sub_priority = uart.get_config(Uart_Config_Code::Interrupt_Sub_Priority);
     return *this;
@@ -356,7 +356,7 @@ public:
    *
    * @return uint32_t 端口号
    */
-  uint32_t port_num()
+  uint32_t port_num() const
   {
     return uart.get_config(Uart_Config_Code::Port_Num);
   }
@@ -367,7 +367,7 @@ public:
    * @param  port_num         端口号引用
    * @return Uart_Get_Config& 配置接口引用
    */
-  Uart_Get_Config& port_num(uint32_t& port_num)
+  Uart_Get_Config& port_num(uint32_t& port_num) const
   {
     port_num = uart.get_config(Uart_Config_Code::Port_Num);
     return *this;
@@ -389,7 +389,7 @@ class Uart_Base<system::device::Stream_Type::READ_ONLY, Config, Base_Device, DE_
   static_assert(Base_Device::type() == system::device::Device_Type::STREAMING, "Uart must be streaming device");
 
   // 禁止拷贝和移动
-  NO_COPY_MOVE(Uart_Base)
+  QAQ_NO_COPY_MOVE(Uart_Base)
 
   /// @brief Uart 工作模式
   using Uart_Type        = uart::Uart_Type;
@@ -706,7 +706,7 @@ class Uart_Base<system::device::Stream_Type::WRITE_ONLY, Config, Base_Device, DE
   static_assert(Base_Device::type() == system::device::Device_Type::STREAMING, "Uart must be streaming device");
 
   // 禁止拷贝和移动
-  NO_COPY_MOVE(Uart_Base)
+  QAQ_NO_COPY_MOVE(Uart_Base)
 
   /// @brief Uart 工作模式
   using Uart_Type        = uart::Uart_Type;
@@ -964,7 +964,7 @@ class Uart_Base<system::device::Stream_Type::READ_WRITE, Config, Base_Device, DE
   static_assert(Base_Device::type() == system::device::Device_Type::STREAMING, "Uart must be streaming device");
 
   // 禁止拷贝和移动
-  NO_COPY_MOVE(Uart_Base)
+  QAQ_NO_COPY_MOVE(Uart_Base)
 
   /// @brief Uart 工作模式
   using Uart_Type        = uart::Uart_Type;
@@ -1270,7 +1270,7 @@ private:
    * @param  param            配置参数
    * @return uint32_t         配置值
    */
-  const uint32_t get_config_impl(uint32_t param) override
+  uint32_t get_config_impl(uint32_t param) const override
   {
     uint32_t value = 0;
 

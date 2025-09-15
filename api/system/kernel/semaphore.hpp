@@ -19,7 +19,7 @@ namespace kernel
 class Semaphore final
 {
   // 禁止拷贝和移动
-  NO_COPY_MOVE(Semaphore)
+  QAQ_NO_COPY_MOVE(Semaphore)
 
 private:
   /// @brief 信号量默认名称
@@ -58,9 +58,9 @@ public:
    * @param  timeout 等待超时时间
    * @return Status  状态
    */
-  Status O3 acquire(uint32_t timeout = TX_WAIT_FOREVER) noexcept
+  Status QAQ_O3 acquire(uint32_t timeout = TX_WAIT_FOREVER) noexcept
   {
-    if (true == IS_IN_ISR || true == IS_IN_TIMER)
+    if (true == QAQ_IS_IN_ISR || true == QAQ_IS_IN_TIMER)
     {
       timeout = 0;
     }
@@ -77,7 +77,7 @@ public:
     else
     {
 #if (SYSTEM_ERROR_LOG_ENABLE && SEMAPHORE_ERROR_LOG_ENABLE)
-      system::System_Monitor::log_error(status, "Semaphore get failed");
+      QAQ_ERROR_LOG(status, "Semaphore get failed");
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && SEMAPHORE_ERROR_LOG_ENABLE) */
       return Status::ERROR;
     }
@@ -89,7 +89,7 @@ public:
    * @param  ceiling 信号量上限值
    * @return Status  状态
    */
-  Status O3 ceiling(uint32_t ceiling) noexcept
+  Status QAQ_O3 ceiling(uint32_t ceiling) noexcept
   {
     const UINT status = tx_semaphore_ceiling_put(&m_semaphore, ceiling);
     if (status == TX_SUCCESS)
@@ -103,7 +103,7 @@ public:
     else
     {
 #if (SYSTEM_ERROR_LOG_ENABLE && SEMAPHORE_ERROR_LOG_ENABLE)
-      system::System_Monitor::log_error(status, "Semaphore ceiling put failed");
+      QAQ_ERROR_LOG(status, "Semaphore ceiling put failed");
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && SEMAPHORE_ERROR_LOG_ENABLE) */
       return Status::ERROR;
     }
@@ -114,7 +114,7 @@ public:
    *
    * @return Status  状态
    */
-  Status O3 release() noexcept
+  Status QAQ_O3 release() noexcept
   {
     const UINT status = tx_semaphore_put(&m_semaphore);
     if (status == TX_SUCCESS)
@@ -124,7 +124,7 @@ public:
     else
     {
 #if (SYSTEM_ERROR_LOG_ENABLE && SEMAPHORE_ERROR_LOG_ENABLE)
-      system::System_Monitor::log_error(status, "Semaphore put failed");
+      QAQ_ERROR_LOG(status, "Semaphore put failed");
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && SEMAPHORE_ERROR_LOG_ENABLE) */
       return Status::ERROR;
     }
@@ -135,7 +135,7 @@ public:
    *
    * @return uint32_t 信号量剩余数量
    */
-  uint32_t O3 available() noexcept
+  uint32_t QAQ_O3 available() noexcept
   {
     ULONG      count;
     const UINT status = tx_semaphore_info_get(&m_semaphore, static_cast<char**>(TX_NULL), &count, static_cast<TX_THREAD**>(TX_NULL), static_cast<ULONG*>(TX_NULL), static_cast<TX_SEMAPHORE**>(TX_NULL));

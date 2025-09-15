@@ -22,48 +22,48 @@ class Net_Manager
 {
 private:
   /// @brief 网络管理器 网络数据包数量
-  static constexpr uint32_t PACKET_COUNT                   = 80;
+  static constexpr uint32_t PACKET_COUNT                       = 80;
   /// @brief 网络管理器 ARP缓存数量
-  static constexpr uint32_t ARP_COUNT                      = 24;
+  static constexpr uint32_t ARP_COUNT                          = 24;
 
   /// @brief 网络管理器 IP地址池大小
-  static constexpr uint32_t IP_POOL_SIZE                   = 2048;
+  static constexpr uint32_t IP_POOL_SIZE                       = 2048;
   /// @brief 网络管理器 ARP缓存池大小
-  static constexpr uint32_t ARP_POOL_SIZE                  = 52 * ARP_COUNT;
+  static constexpr uint32_t ARP_POOL_SIZE                      = 52 * ARP_COUNT;
   /// @brief 网络管理器 网络数据包池大小
-  static constexpr uint32_t PACKET_POOL_SIZE               = PACKET_COUNT * (1536 + sizeof(NX_PACKET));
+  static constexpr uint32_t PACKET_POOL_SIZE                   = PACKET_COUNT * (1536 + sizeof(NX_PACKET));
 
   /// @brief 网络管理器 网络数据包池名称
-  static constexpr char packet_pool_name[]                 = "NetX Main Packet Pool";
+  static constexpr char packet_pool_name[]                     = "NetX Main Packet Pool";
   /// @brief 网络管理器 IP实例名称
-  static constexpr char ip_name[]                          = "NetX IP Instance";
+  static constexpr char ip_name[]                              = "NetX IP Instance";
 
   /// @brief 网络管理器 网络数据包池内存
-  uint8_t m_packet_pool_memory[PACKET_POOL_SIZE] ALIGN(32) = { 0 };
+  uint8_t m_packet_pool_memory[PACKET_POOL_SIZE] QAQ_ALIGN(32) = { 0 };
   /// @brief 网络管理器 IP地址池内存
-  uint8_t m_ip_pool_memory[IP_POOL_SIZE] ALIGN(32)         = { 0 };
+  uint8_t m_ip_pool_memory[IP_POOL_SIZE] QAQ_ALIGN(32)         = { 0 };
   /// @brief 网络管理器 ARP缓存池内存
-  uint8_t m_arp_pool_memory[ARP_POOL_SIZE] ALIGN(32)       = { 0 };
+  uint8_t m_arp_pool_memory[ARP_POOL_SIZE] QAQ_ALIGN(32)       = { 0 };
 
   /// @brief 网络管理器 网络数据包池
-  NX_PACKET_POOL m_packet_pool                             = { 0 };
+  NX_PACKET_POOL m_packet_pool                                 = { 0 };
   /// @brief 网络管理器 IP实例
-  NX_IP          m_ip                                      = { 0 };
+  NX_IP          m_ip                                          = { 0 };
   /// @brief 网络管理器 初始化状态
-  bool           m_init                                    = false;
+  bool           m_init                                        = false;
 
 #ifdef NX_ENABLE_DUAL_PACKET_POOL
   /// @brief 网络管理器 附属网络数据包池数量
-  static constexpr uint32_t DUAL_PACKET_COUNT                               = PACKET_COUNT / 4;
+  static constexpr uint32_t DUAL_PACKET_COUNT                                   = PACKET_COUNT / 4;
   /// @brief 网络管理器 附属网络数据包池大小
-  static constexpr uint32_t DUAL_PACKET_POOL_SIZE                           = DUAL_PACKET_COUNT * (200 + sizeof(NX_PACKET));
+  static constexpr uint32_t DUAL_PACKET_POOL_SIZE                               = DUAL_PACKET_COUNT * (200 + sizeof(NX_PACKET));
   /// @brief 网络管理器 附属网络数据包池名称
-  static constexpr char     dual_packet_pool_name[]                         = "NetX Dual Packet Pool";
+  static constexpr char     dual_packet_pool_name[]                             = "NetX Dual Packet Pool";
 
   /// @brief 网络管理器 附属网络数据包池内存
-  uint8_t        m_dual_packet_pool_memory[DUAL_PACKET_POOL_SIZE] ALIGN(32) = { 0 };
+  uint8_t        m_dual_packet_pool_memory[DUAL_PACKET_POOL_SIZE] QAQ_ALIGN(32) = { 0 };
   /// @brief 网络管理器 附属网络数据包池
-  NX_PACKET_POOL m_dual_packet_pool                                         = { 0 };
+  NX_PACKET_POOL m_dual_packet_pool                                             = { 0 };
 #endif /* NX_ENABLE_DUAL_PACKET_POOL */
 
 protected:
@@ -106,7 +106,7 @@ public:
       if (NX_SUCCESS != error_code)
       {
 #if (SYSTEM_ERROR_LOG_ENABLE && NET_MANAGER_ERROR_LOG_ENABLE)
-        system::System_Monitor::log_error(error_code, "NetX packet pool create error!");
+        QAQ_ERROR_LOG(error_code, "NetX packet pool create error!");
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && NET_MANAGER_ERROR_LOG_ENABLE) */
         ret = false;
       }
@@ -118,7 +118,7 @@ public:
       if (NX_SUCCESS != error_code)
       {
   #if (SYSTEM_ERROR_LOG_ENABLE && NET_MANAGER_ERROR_LOG_ENABLE)
-        system::System_Monitor::log_error(error_code, "NetX dual packet pool create error!");
+        QAQ_ERROR_LOG(error_code, "NetX dual packet pool create error!");
   #endif /* (SYSTEM_ERROR_LOG_ENABLE && NET_MANAGER_ERROR_LOG_ENABLE) */
         ret = false;
       }
@@ -132,7 +132,7 @@ public:
         if (NX_SUCCESS != error_code)
         {
 #if (SYSTEM_ERROR_LOG_ENABLE && NET_MANAGER_ERROR_LOG_ENABLE)
-          system::System_Monitor::log_error(error_code, "NetX ip create error!");
+          QAQ_ERROR_LOG(error_code, "NetX ip create error!");
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && NET_MANAGER_ERROR_LOG_ENABLE) */
           ret = false;
         }
@@ -147,7 +147,7 @@ public:
         if (NX_SUCCESS != error_code)
         {
   #if (SYSTEM_ERROR_LOG_ENABLE && NET_MANAGER_ERROR_LOG_ENABLE)
-          system::System_Monitor::log_error(error_code, "NetX dual packet pool set error!");
+          QAQ_ERROR_LOG(error_code, "NetX dual packet pool set error!");
   #endif /* (SYSTEM_ERROR_LOG_ENABLE && NET_MANAGER_ERROR_LOG_ENABLE) */
           ret = false;
         }
@@ -162,7 +162,7 @@ public:
         if (NX_SUCCESS != error_code)
         {
 #if (SYSTEM_ERROR_LOG_ENABLE && NET_MANAGER_ERROR_LOG_ENABLE)
-          system::System_Monitor::log_error(error_code, "NetX arp create error!");
+          QAQ_ERROR_LOG(error_code, "NetX arp create error!");
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && NET_MANAGER_ERROR_LOG_ENABLE) */
           ret = false;
         }
@@ -175,7 +175,7 @@ public:
         if (NX_SUCCESS != error_code)
         {
 #if (SYSTEM_ERROR_LOG_ENABLE && NET_MANAGER_ERROR_LOG_ENABLE)
-          system::System_Monitor::log_error(error_code, "NetX ip fragment enable error!");
+          QAQ_ERROR_LOG(error_code, "NetX ip fragment enable error!");
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && NET_MANAGER_ERROR_LOG_ENABLE) */
           ret = false;
         }
@@ -188,7 +188,7 @@ public:
         if (NX_SUCCESS != error_code)
         {
 #if (SYSTEM_ERROR_LOG_ENABLE && NET_MANAGER_ERROR_LOG_ENABLE)
-          system::System_Monitor::log_error(error_code, "NetX icmp enable error!");
+          QAQ_ERROR_LOG(error_code, "NetX icmp enable error!");
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && NET_MANAGER_ERROR_LOG_ENABLE) */
           ret = false;
         }
@@ -201,7 +201,7 @@ public:
         if (NX_SUCCESS != error_code)
         {
 #if (SYSTEM_ERROR_LOG_ENABLE && NET_MANAGER_ERROR_LOG_ENABLE)
-          system::System_Monitor::log_error(error_code, "NetX igmp enable error!");
+          QAQ_ERROR_LOG(error_code, "NetX igmp enable error!");
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && NET_MANAGER_ERROR_LOG_ENABLE) */
           ret = false;
         }
@@ -299,7 +299,7 @@ public:
     if (NX_SUCCESS != error_code)
     {
 #if (SYSTEM_ERROR_LOG_ENABLE && NET_MANAGER_ERROR_LOG_ENABLE)
-      system::System_Monitor::log_error(error_code, "NetX udp enable error!");
+      QAQ_ERROR_LOG(error_code, "NetX udp enable error!");
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && NET_MANAGER_ERROR_LOG_ENABLE) */
       ret = false;
     }
@@ -323,7 +323,7 @@ public:
     if (NX_SUCCESS != error_code)
     {
 #if (SYSTEM_ERROR_LOG_ENABLE && NET_MANAGER_ERROR_LOG_ENABLE)
-      system::System_Monitor::log_error(error_code, "NetX tcp enable error!");
+      QAQ_ERROR_LOG(error_code, "NetX tcp enable error!");
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && NET_MANAGER_ERROR_LOG_ENABLE) */
       ret = false;
     }

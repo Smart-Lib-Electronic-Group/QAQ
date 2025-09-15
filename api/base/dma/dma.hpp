@@ -22,7 +22,7 @@ class Dma final : public base_internal::dma_internal::Dma_Base
 
 {
   // 禁止拷贝和移动
-  NO_COPY_MOVE(Dma)
+  QAQ_NO_COPY_MOVE(Dma)
 
 public:
   /**

@@ -79,7 +79,7 @@ constexpr bool is_stack_valid(uint32_t size) noexcept
 void thread_stack_error_handler(TX_THREAD* ptr) noexcept
 {
 #if (SYSTEM_ERROR_LOG_ENABLE && THREAD_ERROR_LOG_ENABLE)
-  system::System_Monitor::log_error(TX_STACK_FILL, "Stack overflow detected");
+  QAQ_ERROR_LOG(TX_STACK_FILL, "Stack overflow detected");
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && THREAD_ERROR_LOG_ENABLE) */
   tx_thread_terminate(ptr);
 }
@@ -109,7 +109,7 @@ template <uint32_t Queue_Size, bool is_enable_signal_post_notify, typename Deriv
 class Thread_Crtp_Base : public Object<Queue_Size, is_enable_signal_post_notify>, public Thread_Base
 {
   // 禁止拷贝与移动
-  NO_COPY_MOVE(Thread_Crtp_Base)
+  QAQ_NO_COPY_MOVE(Thread_Crtp_Base)
 
   /// @brief 线程入口函数
   template <typename T>
@@ -176,7 +176,7 @@ public:
       if (TX_SUCCESS != status)
       {
 #if (SYSTEM_ERROR_LOG_ENABLE && THREAD_ERROR_LOG_ENABLE)
-        system::System_Monitor::log_error(status, "Thread creation failed");
+        QAQ_ERROR_LOG(status, "Thread creation failed");
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && THREAD_ERROR_LOG_ENABLE) */
         error_code = Thread_Error_Code::INIT_FAILED;
       }
@@ -271,7 +271,7 @@ public:
       if (TX_SUCCESS != status)
       {
 #if (SYSTEM_ERROR_LOG_ENABLE && THREAD_ERROR_LOG_ENABLE)
-        system::System_Monitor::log_error(status, "Thread suspend failed");
+        QAQ_ERROR_LOG(status, "Thread suspend failed");
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && THREAD_ERROR_LOG_ENABLE) */
         error_code = Thread_Error_Code::ERROR;
       }
@@ -307,7 +307,7 @@ public:
       if (TX_SUCCESS != status)
       {
 #if (SYSTEM_ERROR_LOG_ENABLE && THREAD_ERROR_LOG_ENABLE)
-        system::System_Monitor::log_error(status, "Thread resume failed");
+        QAQ_ERROR_LOG(status, "Thread resume failed");
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && THREAD_ERROR_LOG_ENABLE) */
         error_code = Thread_Error_Code::ERROR;
       }
@@ -339,7 +339,7 @@ public:
       if (TX_SUCCESS != status)
       {
 #if (SYSTEM_ERROR_LOG_ENABLE && THREAD_ERROR_LOG_ENABLE)
-        system::System_Monitor::log_error(status, "Thread stop failed");
+        QAQ_ERROR_LOG(status, "Thread stop failed");
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && THREAD_ERROR_LOG_ENABLE) */
         error_code = Thread_Error_Code::ERROR;
       }
@@ -378,7 +378,7 @@ public:
         if (TX_SUCCESS != status)
         {
 #if (SYSTEM_ERROR_LOG_ENABLE && THREAD_ERROR_LOG_ENABLE)
-          system::System_Monitor::log_error(status, "Thread reset failed");
+          QAQ_ERROR_LOG(status, "Thread reset failed");
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && THREAD_ERROR_LOG_ENABLE) */
           error_code = Thread_Error_Code::ERROR;
         }
@@ -531,7 +531,7 @@ class Thread<Stack_Size, Queue_Size, void, false> : public system_internal::thre
   // 栈大小检查
   static_assert(system_internal::thread_internal::is_stack_valid(Stack_Size), "Stack size must be 8-byte aligned and >= TX_MINIMUM_STACK");
   // 禁止拷贝与移动
-  NO_COPY_MOVE(Thread)
+  QAQ_NO_COPY_MOVE(Thread)
 
   /// @brief 友元函数 线程入口函数模板
   template <typename T>
@@ -541,7 +541,7 @@ private:
   /// @brief Lambda表达式
   std::function<void()> m_lambda;
   /// @brief 栈空间 - 8字节对齐
-  UCHAR                 m_stack[Stack_Size] ALIGN(8);
+  UCHAR                 m_stack[Stack_Size] QAQ_ALIGN(8);
   /// @brief 循环时间间隔(ms)
   uint32_t              m_loop_time;
 
@@ -637,11 +637,11 @@ class Thread : public system_internal::thread_internal::Thread_Crtp_Base<Queue_S
   static_assert(system_internal::thread_internal::is_stack_valid(Stack_Size), "Stack size must be 8-byte aligned and >= TX_MINIMUM_STACK");
 
   // 禁止拷贝与移动
-  NO_COPY_MOVE(Thread)
+  QAQ_NO_COPY_MOVE(Thread)
 
 private:
   /// @brief 栈空间 - 8字节对齐
-  UCHAR m_stack[Stack_Size] ALIGN(8);
+  UCHAR m_stack[Stack_Size] QAQ_ALIGN(8);
 
 public:
   /**

@@ -13,7 +13,6 @@ int main()
   v_port_system_init();
   SEGGER_RTT_Init();
   SEGGER_SYSVIEW_Conf();
-  PRINT("Hello, world!\n");
   tx_kernel_enter();
   return 0;
 }

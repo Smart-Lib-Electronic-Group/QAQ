@@ -19,7 +19,7 @@ namespace kernel
 class Event_Flags final
 {
   // 禁止拷贝和移动
-  NO_COPY_MOVE(Event_Flags)
+  QAQ_NO_COPY_MOVE(Event_Flags)
 
 private:
   /// @brief 事件标志默认名称
@@ -42,7 +42,7 @@ public:
    *
    * @param name 事件标志名称
    */
-  explicit O3 Event_Flags(const char* name = default_name)
+  explicit QAQ_O3 Event_Flags(const char* name = default_name)
   {
 #if (SYSTEM_ERROR_LOG_ENABLE && EVENT_FLAGS_ERROR_LOG_ENABLE)
     const UINT status = tx_event_flags_create(&m_event_group, const_cast<CHAR*>(name));
@@ -60,7 +60,7 @@ public:
    * @param  wait_option  选项
    * @return uint32_t     结果
    */
-  uint32_t O3 wait(uint32_t flags, uint32_t timeout = TX_WAIT_FOREVER, Options wait_option = Options::Or)
+  uint32_t QAQ_O3 wait(uint32_t flags, uint32_t timeout = TX_WAIT_FOREVER, Options wait_option = Options::Or)
   {
     uint32_t   result = 0;
     const UINT status = tx_event_flags_get(&m_event_group, flags, static_cast<UINT>(wait_option), &result, timeout);
@@ -73,7 +73,7 @@ public:
 #if (SYSTEM_ERROR_LOG_ENABLE && EVENT_FLAGS_ERROR_LOG_ENABLE)
     else if (status != TX_SUCCESS)
     {
-      System_Monitor::log_error(status, "Failed to get event flags");
+      QAQ_ERROR_LOG(status, "Failed to get event flags");
     }
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && EVENT_FLAGS_ERROR_LOG_ENABLE) */
 
@@ -86,7 +86,7 @@ public:
    * @param  timeout   超时时间
    * @return uint32_t  结果
    */
-  uint32_t O3 get(uint32_t timeout = TX_NO_WAIT)
+  uint32_t QAQ_O3 get(uint32_t timeout = TX_NO_WAIT)
   {
     uint32_t   result = 0;
     const UINT status = tx_event_flags_get(&m_event_group, 0xFFFFFFFF, static_cast<UINT>(Options::Or), &result, timeout);
@@ -105,7 +105,7 @@ public:
    * @return true    设置成功
    * @return false   设置失败
    */
-  bool O3 set(uint32_t flags)
+  bool QAQ_O3 set(uint32_t flags)
   {
     const UINT status = tx_event_flags_set(&m_event_group, flags, TX_OR);
 
@@ -123,7 +123,7 @@ public:
    * @return true    清除成功
    * @return false   清除失败
    */
-  bool O3 clear(uint32_t flags)
+  bool QAQ_O3 clear(uint32_t flags)
   {
     const UINT status = tx_event_flags_set(&m_event_group, ~flags, TX_AND);
 

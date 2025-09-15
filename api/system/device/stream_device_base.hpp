@@ -22,7 +22,7 @@ namespace device_internal
 class InDevice_Base : public Device_Base, public Input_Base
 {
   // 禁止拷贝和移动
-  NO_COPY_MOVE(InDevice_Base)
+  QAQ_NO_COPY_MOVE(InDevice_Base)
 
 protected:
   /**
@@ -53,7 +53,7 @@ public:
    *
    * @return uint32_t 缓存区中的数据数量
    */
-  virtual uint32_t available(void) const                                         = 0;
+  virtual uint32_t available(void) const                                      = 0;
 
   /**
    * @brief  输入设备基类 缓存区是否为空 - 纯虚函数
@@ -61,7 +61,7 @@ public:
    * @return true  缓存区空
    * @return false 缓存区不为空
    */
-  virtual bool empty(void) const                                                 = 0;
+  virtual bool empty(void) const                                              = 0;
 
   /**
    * @brief  输入设备基类 缓存区是否为满 - 纯虚函数
@@ -69,14 +69,14 @@ public:
    * @return true  缓存区满
    * @return false 缓存区不为满
    */
-  virtual bool full(void) const                                                  = 0;
+  virtual bool full(void) const                                               = 0;
 
   /**
    * @brief  输入设备基类 清空缓存区 - 纯虚函数
    *
    * @return Device_Error_Code 设备错误码
    */
-  virtual device::Device_Error_Code clear(void)                                  = 0;
+  virtual device::Device_Error_Code clear(void)                               = 0;
 
   /**
    * @brief  输入设备基类 探视数据 - 纯虚函数
@@ -91,7 +91,7 @@ public:
   /**
    * @brief  输入设备基类 回退数据 - 纯虚函数
    */
-  virtual void roll_back(void)                                                   = 0;
+  virtual void roll_back(void)                                                = 0;
 
   /**
    * @brief  输入设备基类 等待输入完成
@@ -179,7 +179,7 @@ public:
 class OutDevice_Base : public Device_Base, public Output_Base
 {
   // 禁止拷贝和移动
-  NO_COPY_MOVE(OutDevice_Base)
+  QAQ_NO_COPY_MOVE(OutDevice_Base)
 
 protected:
   /**
@@ -253,7 +253,7 @@ public:
 class IODevice_Base : public Device_Base, public Input_Base, public Output_Base
 {
   // 禁止拷贝和移动
-  NO_COPY_MOVE(IODevice_Base)
+  QAQ_NO_COPY_MOVE(IODevice_Base)
 
 protected:
   /**
@@ -284,7 +284,7 @@ public:
    *
    * @return uint32_t 缓存区中的数据数量
    */
-  virtual uint32_t available(void) const                                         = 0;
+  virtual uint32_t available(void) const                                      = 0;
 
   /**
    * @brief  输入输出设备基类 缓存区是否为空 - 纯虚函数
@@ -292,7 +292,7 @@ public:
    * @return true  缓存区空
    * @return false 缓存区不为空
    */
-  virtual bool empty(void) const                                                 = 0;
+  virtual bool empty(void) const                                              = 0;
 
   /**
    * @brief  输入输出设备基类 缓存区是否为满 - 纯虚函数
@@ -300,14 +300,14 @@ public:
    * @return true  缓存区满
    * @return false 缓存区不为满
    */
-  virtual bool full(void) const                                                  = 0;
+  virtual bool full(void) const                                               = 0;
 
   /**
    * @brief  输入输出设备基类 清空缓存区 - 纯虚函数
    *
    * @return Device_Error_Code 设备错误码
    */
-  virtual device::Device_Error_Code clear(void)                                  = 0;
+  virtual device::Device_Error_Code clear(void)                               = 0;
 
   /**
    * @brief  输入输出设备基类 探视数据 - 纯虚函数
@@ -322,7 +322,7 @@ public:
   /**
    * @brief  输入输出设备基类 回退数据 - 纯虚函数
    */
-  virtual void roll_back(void)                                                   = 0;
+  virtual void roll_back(void)                                                = 0;
 
   /**
    * @brief  输入输出设备基类 等待输入完成

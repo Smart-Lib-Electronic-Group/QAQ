@@ -57,17 +57,17 @@ class Ring_Buffer_Base
   static_assert(std::is_trivially_copyable_v<T>, "Ring buffer element type must be trivially copyable");
 
   // 禁止拷贝和移动
-  NO_COPY_MOVE(Ring_Buffer_Base)
+  QAQ_NO_COPY_MOVE(Ring_Buffer_Base)
 
 protected:
   /// @brief 环形缓冲区 头指针
-  volatile uint32_t m_head ALIGN(32)             = 0;
+  volatile uint32_t m_head QAQ_ALIGN(32)             = 0;
   /// @brief 环形缓冲区 尾指针
-  volatile uint32_t m_tail ALIGN(32)             = 0;
+  volatile uint32_t m_tail QAQ_ALIGN(32)             = 0;
   /// @brief 环形缓冲区 数据
-  T                        m_buffer[N] ALIGN(32) = { 0 };
+  T                        m_buffer[N] QAQ_ALIGN(32) = { 0 };
   /// @brief 环形缓冲区 回滚指针
-  uint32_t                 m_roll_back_save      = 0;
+  uint32_t                 m_roll_back_save          = 0;
 
 public:
   /// @brief 环形缓冲区 状态
@@ -88,7 +88,7 @@ private:
    * @return true     写入成功
    * @return false    写入失败
    */
-  bool O3 try_push(const T& data) noexcept
+  bool QAQ_O3 try_push(const T& data) noexcept
   {
     const uint32_t current_tail = m_tail;
     const uint32_t next_tail    = (current_tail + 1) & (N - 1);
@@ -110,7 +110,7 @@ private:
    * @return true     读取成功
    * @return false    读取失败
    */
-  bool O3 try_pop(T& data) noexcept
+  bool QAQ_O3 try_pop(T& data) noexcept
   {
     const uint32_t current_head = m_head;
     if (current_head == m_tail)
@@ -131,7 +131,7 @@ private:
    * @param  request  要读取的数据数量
    * @return uint32_t 实际读取的数据数量
    */
-  uint32_t O3 try_read(T* data, uint32_t request) noexcept
+  uint32_t QAQ_O3 try_read(T* data, uint32_t request) noexcept
   {
     const uint32_t used            = available();
     const uint32_t copy_size       = (request > used) ? used : request;
@@ -157,7 +157,7 @@ private:
    * @param  request  要写入的数据数量
    * @return uint32_t 实际写入的数据数量
    */
-  uint32_t O3 try_write(const T* data, uint32_t request) noexcept
+  uint32_t QAQ_O3 try_write(const T* data, uint32_t request) noexcept
   {
     const uint32_t space           = this->space();
     const uint32_t copy_size       = (request > space) ? space : request;
@@ -181,7 +181,7 @@ private:
    * @return true     回滚成功
    * @return false    回滚失败
    */
-  bool O3 try_roll_back(void) noexcept
+  bool QAQ_O3 try_roll_back(void) noexcept
   {
     if (m_head == m_roll_back_save)
     {
@@ -199,7 +199,7 @@ private:
    * @param  request   要探视的数据数量
    * @return uint32_t  实际探视的数据数量
    */
-  uint32_t O3 try_peek(T* data, uint32_t request) const noexcept
+  uint32_t QAQ_O3 try_peek(T* data, uint32_t request) const noexcept
   {
     const uint32_t used = available();
 
@@ -403,7 +403,7 @@ template <typename T, uint32_t N>
 class Ring_Buffer<T, N, Ring_Buffer_Mode::NORMAL> : public system_internal::ring_buffer_internal::Ring_Buffer_Base<T, N>
 {
   // 禁止拷贝和移动
-  NO_COPY_MOVE(Ring_Buffer)
+  QAQ_NO_COPY_MOVE(Ring_Buffer)
 
 private:
   // 基类类型
@@ -503,7 +503,7 @@ template <typename T, uint32_t N>
 class Ring_Buffer<T, N, Ring_Buffer_Mode::INPUT_BYTES> : public system_internal::ring_buffer_internal::Ring_Buffer_Base<T, N>
 {
   // 禁止拷贝和移动
-  NO_COPY_MOVE(Ring_Buffer)
+  QAQ_NO_COPY_MOVE(Ring_Buffer)
 
 private:
   template <device::Stream_Type Type, uint32_t In_Buf_Size, uint32_t Out_Buf_Size, memory::Ring_Buffer_Mode In_Buf_Mode>
@@ -607,7 +607,7 @@ template <typename T, uint32_t N>
 class Ring_Buffer<T, N, Ring_Buffer_Mode::INPUT_SINGLE_BUFFER> : public system_internal::ring_buffer_internal::Ring_Buffer_Base<T, N>
 {
   // 禁止拷贝和移动
-  NO_COPY_MOVE(Ring_Buffer)
+  QAQ_NO_COPY_MOVE(Ring_Buffer)
 
 private:
   template <device::Stream_Type Type, uint32_t In_Buf_Size, uint32_t Out_Buf_Size, memory::Ring_Buffer_Mode In_Buf_Mode>
@@ -619,7 +619,7 @@ private:
   using Status = typename Base::Status;
 
   /// @brief 环形缓冲区 额外缓冲区
-  T    m_ex_buffer[N] ALIGN(32);
+  T    m_ex_buffer[N] QAQ_ALIGN(32);
   /// @brief 是否使用额外缓冲区
   bool m_is_used_ex_buffer = false;
 
@@ -749,7 +749,7 @@ template <typename T, uint32_t N>
 class Ring_Buffer<T, N, Ring_Buffer_Mode::INPUT_DOUBLE_BUFFER> : public system_internal::ring_buffer_internal::Ring_Buffer_Base<T, N>
 {
   // 禁止拷贝和移动
-  NO_COPY_MOVE(Ring_Buffer)
+  QAQ_NO_COPY_MOVE(Ring_Buffer)
 
 private:
   template <device::Stream_Type Type, uint32_t In_Buf_Size, uint32_t Out_Buf_Size, memory::Ring_Buffer_Mode In_Buf_Mode>
@@ -761,9 +761,9 @@ private:
   using Status = typename Base::Status;
 
   /// @brief 环形缓冲区 第一个缓冲区
-  T    m_first_buffer[N / 2] ALIGN(32);
+  T    m_first_buffer[N / 2] QAQ_ALIGN(32);
   /// @brief 环形缓冲区 第二个缓冲区
-  T    m_second_buffer[N / 2] ALIGN(32);
+  T    m_second_buffer[N / 2] QAQ_ALIGN(32);
   /// @brief 当前缓冲区
   bool m_current_buffer = 0;
 
@@ -882,7 +882,7 @@ template <typename T, uint32_t N>
 class Ring_Buffer<T, N, Ring_Buffer_Mode::OUTPUT> : public system_internal::ring_buffer_internal::Ring_Buffer_Base<T, N>
 {
   // 禁止拷贝和移动
-  NO_COPY_MOVE(Ring_Buffer)
+  QAQ_NO_COPY_MOVE(Ring_Buffer)
 
 private:
   template <device::Stream_Type Type, uint32_t In_Buf_Size, uint32_t Out_Buf_Size, memory::Ring_Buffer_Mode In_Buf_Mode>
@@ -894,7 +894,7 @@ private:
   using Status = typename Base::Status;
 
   /// @brief 环形缓冲区 额外缓冲区
-  T        m_ex_buffer[N] ALIGN(32);
+  T        m_ex_buffer[N] QAQ_ALIGN(32);
   /// @brief 输出的数据长度
   uint32_t m_output_size = 0;
 

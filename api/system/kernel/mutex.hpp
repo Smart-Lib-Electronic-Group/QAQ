@@ -21,7 +21,7 @@ template <bool priority_inherit = true>
 class Mutex final
 {
   // 禁止拷贝与移动
-  NO_COPY_MOVE(Mutex)
+  QAQ_NO_COPY_MOVE(Mutex)
 
 private:
   /// @brief 互斥锁默认名称
@@ -62,13 +62,13 @@ public:
    * @param  timeout 超时时间(ms)
    * @return Status  状态
    */
-  Status O3 lock(uint32_t timeout = TX_WAIT_FOREVER) noexcept
+  Status QAQ_O3 lock(uint32_t timeout = TX_WAIT_FOREVER) noexcept
   {
-    if (IS_IN_ISR)
+    if (QAQ_IS_IN_ISR)
     {
       return Status::IN_ISR;
     }
-    else if (IS_IN_TIMER)
+    else if (QAQ_IS_IN_TIMER)
     {
       timeout = 0;
     }
@@ -85,7 +85,7 @@ public:
     else
     {
 #if (SYSTEM_ERROR_LOG_ENABLE && MUTEX_ERROR_LOG_ENABLE)
-      system::System_Monitor::log_error(status, "Mutex get failed");
+      QAQ_ERROR_LOG(status, "Mutex get failed");
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && MUTEX_ERROR_LOG_ENABLE) */
       return Status::ERROR;
     }
@@ -96,9 +96,9 @@ public:
    *
    * @return Status 状态
    */
-  Status O3 unlock() noexcept
+  Status QAQ_O3 unlock() noexcept
   {
-    if (IS_IN_ISR)
+    if (QAQ_IS_IN_ISR)
     {
       return Status::IN_ISR;
     }
@@ -115,7 +115,7 @@ public:
     else
     {
 #if (SYSTEM_ERROR_LOG_ENABLE && MUTEX_ERROR_LOG_ENABLE)
-      system::System_Monitor::log_error(status, "Mutex put failed");
+      QAQ_ERROR_LOG(status, "Mutex put failed");
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && MUTEX_ERROR_LOG_ENABLE) */
       return Status::ERROR;
     }
@@ -194,7 +194,7 @@ template <typename T>
 class Mutex_Guard
 {
   // 禁止拷贝与移动
-  NO_COPY_MOVE(Mutex_Guard)
+  QAQ_NO_COPY_MOVE(Mutex_Guard)
 
 private:
   /// @brief 互斥锁引用

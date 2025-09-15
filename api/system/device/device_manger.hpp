@@ -39,7 +39,7 @@ struct Device_Event_Message
 class Device_Manager final : private thread::Thread<DEVICE_MANAGER_STACK_SIZE, 0, Device_Manager>
 {
   // 禁止拷贝和移动
-  NO_COPY_MOVE(Device_Manager)
+  QAQ_NO_COPY_MOVE(Device_Manager)
 
 private:
   /// @brief 设备管理器 消息队列名称

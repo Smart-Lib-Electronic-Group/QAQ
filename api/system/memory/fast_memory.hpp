@@ -19,7 +19,7 @@ extern inline void* fast_memcpy(void* dest, const void* src, size_t n) noexcept;
 namespace system_internal
 {
 /// @brief 命名空间 内存 内部
-namespace merory_internal
+namespace memory_internal
 {
 /// @brief DMA区域起始地址
 constexpr uint32_t DMA_REGION_START = DMA_REGION_START_ADDRESSES;
@@ -64,7 +64,7 @@ constexpr bool is_dma_region(const void* ptr) noexcept
  * @param  size       缓存大小
  */
 template <bool Clean, bool Invalidate>
-INLINE void O3 cache_ops(const void* ptr, size_t size) noexcept
+QAQ_INLINE void QAQ_O3 cache_ops(const void* ptr, size_t size) noexcept
 {
   if constexpr (Clean || Invalidate)
   {
@@ -94,7 +94,7 @@ INLINE void O3 cache_ops(const void* ptr, size_t size) noexcept
  * @return void*    目标地址
  */
 template <bool DMA_SRC, bool DMA_DEST>
-INLINE void* O3 copy_core(void* dest, const void* src, size_t n) noexcept
+QAQ_INLINE void* QAQ_O3 copy_core(void* dest, const void* src, size_t n) noexcept
 {
   // 内存屏障保证操作顺序
   __DMB();
@@ -180,7 +180,7 @@ INLINE void* O3 copy_core(void* dest, const void* src, size_t n) noexcept
  * @return void*    目标地址
  */
 template <bool DMA_DEST>
-INLINE void* O3 set_core(void* dest, int ch, size_t n) noexcept
+QAQ_INLINE void* QAQ_O3 set_core(void* dest, int ch, size_t n) noexcept
 {
   __DMB();
   if constexpr (DMA_DEST)
@@ -238,7 +238,7 @@ INLINE void* O3 set_core(void* dest, int ch, size_t n) noexcept
  * @return void*    目标地址
  */
 template <bool DMA_SRC, bool DMA_DEST>
-INLINE void* O3 move_core(void* dest, const void* src, size_t n) noexcept
+QAQ_INLINE void* QAQ_O3 move_core(void* dest, const void* src, size_t n) noexcept
 {
   const auto d = static_cast<uint8_t*>(dest);
   const auto s = static_cast<const uint8_t*>(src);
@@ -276,7 +276,7 @@ INLINE void* O3 move_core(void* dest, const void* src, size_t n) noexcept
  * @return int      相等返回0，不等返回1或-1
  */
 template <bool DMA_SRC, bool DMA_DEST>
-INLINE int O3 compare_core(const void* s1, const void* s2, size_t n) noexcept
+QAQ_INLINE int QAQ_O3 compare_core(const void* s1, const void* s2, size_t n) noexcept
 {
   __DMB();
   if constexpr (DMA_SRC)
@@ -307,7 +307,7 @@ INLINE int O3 compare_core(const void* s1, const void* s2, size_t n) noexcept
   }
   return 0;
 }
-} /* namespace merory_internal */
+} /* namespace memory_internal */
 } /* namespace system_internal */
 
 /// @brief 名称空间 内存
@@ -321,19 +321,19 @@ namespace memory
  * @param  n      拷贝大小
  * @return void*  目标地址
  */
-/* INLINE void* O3 fast_memcpy(void* dest, const void* src, size_t n) noexcept
+/* QAQ_INLINE void* QAQ_O3 fast_memcpy(void* dest, const void* src, size_t n) noexcept
 {
   return __builtin_memcpy(dest, src, n);
 } */
 
-INLINE void* O3 fast_memcpy(void* dest, const void* src, size_t n) noexcept
+QAQ_INLINE void* QAQ_O3 fast_memcpy(void* dest, const void* src, size_t n) noexcept
 {
   if (n == 0 || dest == src)
     return dest;
 
   constexpr size_t min_dma_size = 64;
-  const bool       src_dma      = system_internal::merory_internal::is_dma_region(src);
-  const bool       dest_dma     = system_internal::merory_internal::is_dma_region(dest);
+  const bool       src_dma      = system_internal::memory_internal::is_dma_region(src);
+  const bool       dest_dma     = system_internal::memory_internal::is_dma_region(dest);
 
   // 小数据直接使用编译器内置实现
   if (n < min_dma_size && !(src_dma || dest_dma))
@@ -344,23 +344,23 @@ INLINE void* O3 fast_memcpy(void* dest, const void* src, size_t n) noexcept
   // 选择优化路径
   if (src_dma && dest_dma)
   {
-    return system_internal::merory_internal::copy_core<true, true>(dest, src, n);
+    return system_internal::memory_internal::copy_core<true, true>(dest, src, n);
   }
   else if (src_dma)
   {
-    return system_internal::merory_internal::copy_core<true, false>(dest, src, n);
+    return system_internal::memory_internal::copy_core<true, false>(dest, src, n);
   }
   else if (dest_dma)
   {
-    return system_internal::merory_internal::copy_core<false, true>(dest, src, n);
+    return system_internal::memory_internal::copy_core<false, true>(dest, src, n);
   }
   else
   {
     // 普通内存优化路径
-    const bool aligned64 = system_internal::merory_internal::is_aligned<8>(dest) && system_internal::merory_internal::is_aligned<8>(src);
+    const bool aligned64 = system_internal::memory_internal::is_aligned<8>(dest) && system_internal::memory_internal::is_aligned<8>(src);
     if (aligned64)
     {
-      return system_internal::merory_internal::copy_core<false, false>(dest, src, n);
+      return system_internal::memory_internal::copy_core<false, false>(dest, src, n);
     }
     else
     {
@@ -369,7 +369,7 @@ INLINE void* O3 fast_memcpy(void* dest, const void* src, size_t n) noexcept
   }
 }
 
-/* INLINE void* fast_memcpy(void* dest, const void* src, size_t n)
+/* QAQ_INLINE void* fast_memcpy(void* dest, const void* src, size_t n)
 {
   // 处理零长度拷贝
   if (n == 0)
@@ -597,7 +597,7 @@ INLINE void* O3 fast_memcpy(void* dest, const void* src, size_t n) noexcept
   return dest;
 }*/
 
-/* INLINE void* fast_memcpy(void* dst, const void* src, size_t n) noexcept
+/* QAQ_INLINE void* fast_memcpy(void* dst, const void* src, size_t n) noexcept
 {
   uint8_t*       d = (uint8_t*)dst;
   const uint8_t* s = (const uint8_t*)src;
@@ -647,7 +647,7 @@ INLINE void* O3 fast_memcpy(void* dest, const void* src, size_t n) noexcept
   return dst;
 } */
 
-/* INLINE void* fast_memcpy(void* dst, const void* src, size_t len)
+/* QAQ_INLINE void* fast_memcpy(void* dst, const void* src, size_t len)
 {
   if (len == 0)
     return dst;
@@ -718,7 +718,7 @@ INLINE void* O3 fast_memcpy(void* dest, const void* src, size_t n) noexcept
   return dst;
 } */
 
-/* INLINE void* fast_memcpy(void* dest, const void* src, size_t n)
+/* QAQ_INLINE void* fast_memcpy(void* dest, const void* src, size_t n)
 {
   // 保存原始指针用于返回
   void* ret = dest;
@@ -825,18 +825,18 @@ INLINE void* O3 fast_memcpy(void* dest, const void* src, size_t n) noexcept
  * @param  n      填充大小
  * @return void*  目标地址
  */
-INLINE void* O3 fast_memset(void* dest, int ch, size_t n) noexcept
+QAQ_INLINE void* QAQ_O3 fast_memset(void* dest, int ch, size_t n) noexcept
 {
   if (n == 0)
     return dest;
 
-  const bool dest_dma = system_internal::merory_internal::is_dma_region(dest);
+  const bool dest_dma = system_internal::memory_internal::is_dma_region(dest);
   if (dest_dma || n >= 64)
   {
     if (dest_dma)
-      return system_internal::merory_internal::set_core<true>(dest, ch, n);
+      return system_internal::memory_internal::set_core<true>(dest, ch, n);
     else
-      return system_internal::merory_internal::set_core<false>(dest, ch, n);
+      return system_internal::memory_internal::set_core<false>(dest, ch, n);
   }
   else
   {
@@ -871,30 +871,30 @@ INLINE void* O3 fast_memset(void* dest, int ch, size_t n) noexcept
  * @param  n      移动大小
  * @return void*  目标地址
  */
-INLINE void* O3 fast_memmove(void* dest, const void* src, size_t n) noexcept
+QAQ_INLINE void* QAQ_O3 fast_memmove(void* dest, const void* src, size_t n) noexcept
 {
   if (n == 0 || dest == src)
     return dest;
 
-  const bool src_dma  = system_internal::merory_internal::is_dma_region(src);
-  const bool dest_dma = system_internal::merory_internal::is_dma_region(dest);
+  const bool src_dma  = system_internal::memory_internal::is_dma_region(src);
+  const bool dest_dma = system_internal::memory_internal::is_dma_region(dest);
 
   if (src_dma && dest_dma)
   {
-    return system_internal::merory_internal::move_core<true, true>(dest, src, n);
+    return system_internal::memory_internal::move_core<true, true>(dest, src, n);
   }
   else if (src_dma)
   {
-    return system_internal::merory_internal::move_core<true, false>(dest, src, n);
+    return system_internal::memory_internal::move_core<true, false>(dest, src, n);
   }
   else if (dest_dma)
   {
-    return system_internal::merory_internal::move_core<false, true>(dest, src, n);
+    return system_internal::memory_internal::move_core<false, true>(dest, src, n);
   }
   else
   {
     // 非DMA区域使用优化拷贝
-    const bool aligned64 = system_internal::merory_internal::is_aligned<8>(dest) && system_internal::merory_internal::is_aligned<8>(src);
+    const bool aligned64 = system_internal::memory_internal::is_aligned<8>(dest) && system_internal::memory_internal::is_aligned<8>(src);
     if (aligned64)
     {
       return fast_memcpy(dest, src, n);
@@ -914,30 +914,30 @@ INLINE void* O3 fast_memmove(void* dest, const void* src, size_t n) noexcept
  * @param  n   比较大小
  * @return int 相等返回0，不等返回1或-1
  */
-INLINE int O3 fast_memcmp(const void* s1, const void* s2, size_t n) noexcept
+QAQ_INLINE int QAQ_O3 fast_memcmp(const void* s1, const void* s2, size_t n) noexcept
 {
   if (n == 0)
     return 0;
 
-  const bool s1_dma = system_internal::merory_internal::is_dma_region(s1);
-  const bool s2_dma = system_internal::merory_internal::is_dma_region(s2);
+  const bool s1_dma = system_internal::memory_internal::is_dma_region(s1);
+  const bool s2_dma = system_internal::memory_internal::is_dma_region(s2);
 
   if (s1_dma && s2_dma)
   {
-    return system_internal::merory_internal::compare_core<true, true>(s1, s2, n);
+    return system_internal::memory_internal::compare_core<true, true>(s1, s2, n);
   }
   else if (s1_dma)
   {
-    return system_internal::merory_internal::compare_core<true, false>(s1, s2, n);
+    return system_internal::memory_internal::compare_core<true, false>(s1, s2, n);
   }
   else if (s2_dma)
   {
-    return system_internal::merory_internal::compare_core<false, true>(s1, s2, n);
+    return system_internal::memory_internal::compare_core<false, true>(s1, s2, n);
   }
   else
   {
     // 非DMA优化路径
-    const bool aligned64 = system_internal::merory_internal::is_aligned<8>(s1) && system_internal::merory_internal::is_aligned<8>(s2);
+    const bool aligned64 = system_internal::memory_internal::is_aligned<8>(s1) && system_internal::memory_internal::is_aligned<8>(s2);
     if (aligned64)
     {
       const uint64_t* p1 = static_cast<const uint64_t*>(s1);

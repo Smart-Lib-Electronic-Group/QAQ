@@ -66,7 +66,7 @@ class Tcp_Socket
 {
 private:
   /// @brief TCP套接字 结构体
-  NX_TCP_SOCKET m_socket = { 0 };
+  mutable NX_TCP_SOCKET m_socket = { 0 };
 
 protected:
   /**
@@ -143,7 +143,7 @@ protected:
 #if (SYSTEM_ERROR_LOG_ENABLE && TCP_SOCKET_ERROR_LOG_ENABLE)
     if (NX_SUCCESS != status)
     {
-      system::System_Monitor::log_error(status, "TCP Socket Create Failed");
+      QAQ_ERROR_LOG(status, "TCP Socket Create Failed");
     }
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && TCP_SOCKET_ERROR_LOG_ENABLE) */
 
@@ -156,7 +156,7 @@ protected:
         nx_tcp_socket_delete(&m_socket);
 
 #if (SYSTEM_ERROR_LOG_ENABLE && TCP_SOCKET_ERROR_LOG_ENABLE)
-        system::System_Monitor::log_error(status, "TCP Socket Receive Notify Failed");
+        QAQ_ERROR_LOG(status, "TCP Socket Receive Notify Failed");
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && TCP_SOCKET_ERROR_LOG_ENABLE) */
       }
     }
@@ -192,7 +192,7 @@ protected:
 #if (SYSTEM_ERROR_LOG_ENABLE && TCP_SOCKET_ERROR_LOG_ENABLE)
     else
     {
-      system::System_Monitor::log_error(status, "TCP Socket Listen Failed");
+      QAQ_ERROR_LOG(status, "TCP Socket Listen Failed");
     }
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && TCP_SOCKET_ERROR_LOG_ENABLE) */
 
@@ -220,7 +220,7 @@ protected:
 #if (SYSTEM_ERROR_LOG_ENABLE && TCP_SOCKET_ERROR_LOG_ENABLE)
     else
     {
-      system::System_Monitor::log_error(status, "TCP Socket Relisten Failed");
+      QAQ_ERROR_LOG(status, "TCP Socket Relisten Failed");
     }
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && TCP_SOCKET_ERROR_LOG_ENABLE) */
 
@@ -248,7 +248,7 @@ protected:
 #if (SYSTEM_ERROR_LOG_ENABLE && TCP_SOCKET_ERROR_LOG_ENABLE)
     else
     {
-      system::System_Monitor::log_error(status, "TCP Socket Unlisten Failed");
+      QAQ_ERROR_LOG(status, "TCP Socket Unlisten Failed");
     }
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && TCP_SOCKET_ERROR_LOG_ENABLE) */
 
@@ -276,7 +276,7 @@ protected:
 #if (SYSTEM_ERROR_LOG_ENABLE && TCP_SOCKET_ERROR_LOG_ENABLE)
     else
     {
-      system::System_Monitor::log_error(status, "TCP Socket Accept Failed");
+      QAQ_ERROR_LOG(status, "TCP Socket Accept Failed");
     }
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && TCP_SOCKET_ERROR_LOG_ENABLE) */
 
@@ -303,7 +303,7 @@ protected:
 #if (SYSTEM_ERROR_LOG_ENABLE && TCP_SOCKET_ERROR_LOG_ENABLE)
     else
     {
-      system::System_Monitor::log_error(status, "TCP Socket Unaccept Failed");
+      QAQ_ERROR_LOG(status, "TCP Socket Unaccept Failed");
     }
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && TCP_SOCKET_ERROR_LOG_ENABLE) */
 
@@ -332,7 +332,7 @@ protected:
 #if (SYSTEM_ERROR_LOG_ENABLE && TCP_SOCKET_ERROR_LOG_ENABLE)
     else
     {
-      system::System_Monitor::log_error(status, "TCP Socket Bind Failed");
+      QAQ_ERROR_LOG(status, "TCP Socket Bind Failed");
     }
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && TCP_SOCKET_ERROR_LOG_ENABLE) */
 
@@ -359,7 +359,7 @@ protected:
 #if (SYSTEM_ERROR_LOG_ENABLE && TCP_SOCKET_ERROR_LOG_ENABLE)
     else
     {
-      system::System_Monitor::log_error(status, "TCP Socket Unbind Failed");
+      QAQ_ERROR_LOG(status, "TCP Socket Unbind Failed");
     }
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && TCP_SOCKET_ERROR_LOG_ENABLE) */
 
@@ -393,7 +393,7 @@ protected:
 #if (SYSTEM_ERROR_LOG_ENABLE && TCP_SOCKET_ERROR_LOG_ENABLE)
     else
     {
-      system::System_Monitor::log_error(status, "TCP Socket Connect Failed");
+      QAQ_ERROR_LOG(status, "TCP Socket Connect Failed");
     }
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && TCP_SOCKET_ERROR_LOG_ENABLE) */
 
@@ -457,7 +457,7 @@ protected:
 #if (SYSTEM_ERROR_LOG_ENABLE && TCP_SOCKET_ERROR_LOG_ENABLE)
     else if (NX_NOT_CONNECTED != status && NX_DISCONNECT_FAILED != status)
     {
-      system::System_Monitor::log_error(status, "TCP Socket Disconnect Failed");
+      QAQ_ERROR_LOG(status, "TCP Socket Disconnect Failed");
     }
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && TCP_SOCKET_ERROR_LOG_ENABLE) */
 
@@ -487,7 +487,7 @@ protected:
     if (status != NX_SUCCESS)
     {
 #if (SYSTEM_ERROR_LOG_ENABLE && TCP_SOCKET_ERROR_LOG_ENABLE)
-      system::System_Monitor::log_error(status, "TCP Socket Get MSS Failed");
+      QAQ_ERROR_LOG(status, "TCP Socket Get MSS Failed");
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && TCP_SOCKET_ERROR_LOG_ENABLE) */
     }
     else
@@ -564,7 +564,7 @@ protected:
           if (status != NX_SUCCESS)
           {
 #if (SYSTEM_ERROR_LOG_ENABLE && TCP_SOCKET_ERROR_LOG_ENABLE)
-            system::System_Monitor::log_error(status, "TCP Socket Packet Allocate Failed");
+            QAQ_ERROR_LOG(status, "TCP Socket Packet Allocate Failed");
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && TCP_SOCKET_ERROR_LOG_ENABLE) */
             break;
           }
@@ -578,7 +578,7 @@ protected:
 #if (SYSTEM_ERROR_LOG_ENABLE && TCP_SOCKET_ERROR_LOG_ENABLE)
             if (NX_WINDOW_OVERFLOW != status && NX_NOT_CONNECTED != status)
             {
-              system::System_Monitor::log_error(status, "TCP Socket Send Failed");
+              QAQ_ERROR_LOG(status, "TCP Socket Send Failed");
             }
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && TCP_SOCKET_ERROR_LOG_ENABLE) */
 
@@ -613,7 +613,7 @@ protected:
 #if (SYSTEM_ERROR_LOG_ENABLE && TCP_SOCKET_ERROR_LOG_ENABLE)
     if (NX_SUCCESS != status)
     {
-      system::System_Monitor::log_error(status, "TCP Socket Packet Allocate Failed");
+      QAQ_ERROR_LOG(status, "TCP Socket Packet Allocate Failed");
     }
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && TCP_SOCKET_ERROR_LOG_ENABLE) */
 
@@ -625,7 +625,7 @@ protected:
       {
         nx_packet_release(packet);
 #if (SYSTEM_ERROR_LOG_ENABLE && TCP_SOCKET_ERROR_LOG_ENABLE)
-        system::System_Monitor::log_error(status, "TCP Socket Packet Data Append Failed");
+        QAQ_ERROR_LOG(status, "TCP Socket Packet Data Append Failed");
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && TCP_SOCKET_ERROR_LOG_ENABLE) */
       }
     }
@@ -639,13 +639,13 @@ protected:
         ret = 0;
         nx_packet_release(packet);
 
-        system::System_Monitor::log_error(status, "TCP Socket Packet Length Get Failed");
+        QAQ_ERROR_LOG(status, "TCP Socket Packet Length Get Failed");
       }
       else
       {
         if (ret != size)
         {
-          system::System_Monitor::log_error(status, "TCP Socket Packet Size Error");
+          QAQ_ERROR_LOG(status, "TCP Socket Packet Size Error");
         }
       }
 #else
@@ -668,7 +668,7 @@ protected:
 #if (SYSTEM_ERROR_LOG_ENABLE && TCP_SOCKET_ERROR_LOG_ENABLE)
         if (NX_WINDOW_OVERFLOW != status && NX_NOT_CONNECTED != status)
         {
-          system::System_Monitor::log_error(status, "TCP Socket Send Failed");
+          QAQ_ERROR_LOG(status, "TCP Socket Send Failed");
         }
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && TCP_SOCKET_ERROR_LOG_ENABLE) */
       }
@@ -762,7 +762,7 @@ protected:
     {
       if (NX_NOT_CONNECTED != status)
       {
-        system::System_Monitor::log_error(status, "TCP Socket Receive Failed");
+        QAQ_ERROR_LOG(status, "TCP Socket Receive Failed");
       }
     }
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && TCP_SOCKET_ERROR_LOG_ENABLE) */
@@ -793,7 +793,7 @@ protected:
     {
       if (NX_NOT_CONNECTED != status)
       {
-        system::System_Monitor::log_error(status, "TCP Socket Receive Failed");
+        QAQ_ERROR_LOG(status, "TCP Socket Receive Failed");
       }
     }
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && TCP_SOCKET_ERROR_LOG_ENABLE) */
@@ -808,7 +808,7 @@ protected:
         nx_packet_release(packet);
 
 #if (SYSTEM_ERROR_LOG_ENABLE && TCP_SOCKET_ERROR_LOG_ENABLE)
-        system::System_Monitor::log_error(status, "TCP Socket Packet Length Get Failed");
+        QAQ_ERROR_LOG(status, "TCP Socket Packet Length Get Failed");
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && TCP_SOCKET_ERROR_LOG_ENABLE) */
       }
     }
@@ -822,7 +822,7 @@ protected:
         length = 0;
 
 #if (SYSTEM_ERROR_LOG_ENABLE && TCP_SOCKET_ERROR_LOG_ENABLE)
-        system::System_Monitor::log_error(status, "TCP Socket Packet Data Extract Failed");
+        QAQ_ERROR_LOG(status, "TCP Socket Packet Data Extract Failed");
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && TCP_SOCKET_ERROR_LOG_ENABLE) */
       }
 
@@ -868,7 +868,7 @@ protected:
       {
         ret = false;
 #if (SYSTEM_ERROR_LOG_ENABLE && TCP_SOCKET_ERROR_LOG_ENABLE)
-        system::System_Monitor::log_error(status, "TCP Socket Receive Failed");
+        QAQ_ERROR_LOG(status, "TCP Socket Receive Failed");
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && TCP_SOCKET_ERROR_LOG_ENABLE) */
       }
     }
@@ -883,7 +883,7 @@ protected:
    * @return true   获取成功
    * @return false  获取失败
    */
-  bool get_peer_ip(uint32_t& ip)
+  bool get_peer_ip(uint32_t& ip) const
   {
     bool ret    = false;
     UINT status = NX_SUCCESS;
@@ -901,7 +901,7 @@ protected:
 #if (SYSTEM_ERROR_LOG_ENABLE && TCP_SOCKET_ERROR_LOG_ENABLE)
       if (NX_NOT_CONNECTED != status)
       {
-        system::System_Monitor::log_error(status, "TCP Socket Peer Info Get Failed");
+        QAQ_ERROR_LOG(status, "TCP Socket Peer Info Get Failed");
       }
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && TCP_SOCKET_ERROR_LOG_ENABLE) */
     }
@@ -916,7 +916,7 @@ protected:
    * @return true     获取成功
    * @return false    获取失败
    */
-  bool get_peer_port(uint32_t& port)
+  bool get_peer_port(uint32_t& port) const
   {
     bool ret    = false;
     UINT status = NX_SUCCESS;
@@ -934,7 +934,7 @@ protected:
 #if (SYSTEM_ERROR_LOG_ENABLE && TCP_SOCKET_ERROR_LOG_ENABLE)
       if (NX_NOT_CONNECTED != status)
       {
-        system::System_Monitor::log_error(status, "TCP Socket Peer Info Get Failed");
+        QAQ_ERROR_LOG(status, "TCP Socket Peer Info Get Failed");
       }
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && TCP_SOCKET_ERROR_LOG_ENABLE) */
     }
@@ -967,7 +967,7 @@ protected:
 #if (SYSTEM_ERROR_LOG_ENABLE && TCP_SOCKET_ERROR_LOG_ENABLE)
       if (NX_NOT_CONNECTED != status)
       {
-        system::System_Monitor::log_error(status, "TCP Socket Client Info Get Failed");
+        QAQ_ERROR_LOG(status, "TCP Socket Client Info Get Failed");
       }
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && TCP_SOCKET_ERROR_LOG_ENABLE) */
     }
@@ -995,7 +995,7 @@ protected:
 #if (SYSTEM_ERROR_LOG_ENABLE && TCP_SOCKET_ERROR_LOG_ENABLE)
     else
     {
-      system::System_Monitor::log_error(status, "TCP Socket Delete Failed");
+      QAQ_ERROR_LOG(status, "TCP Socket Delete Failed");
     }
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && TCP_SOCKET_ERROR_LOG_ENABLE) */
 

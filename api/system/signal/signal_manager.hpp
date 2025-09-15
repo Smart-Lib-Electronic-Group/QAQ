@@ -74,7 +74,8 @@ struct Receiver_Node
   /// @brief 连接组指针
   Connection_Group*             group;
 
-  Receiver_Node() : receiver(nullptr), handle(nullptr), type(signal::Connection_Type::Direct_Connection), next_node(nullptr), group(nullptr) {}
+  Receiver_Node() noexcept : receiver(nullptr), handle(nullptr), type(signal::Connection_Type::Direct_Connection), next_node(nullptr), group(nullptr) {}
+  ~Receiver_Node() noexcept {}
 };
 
 /// @brief 连接组结构体
@@ -89,7 +90,8 @@ struct Connection_Group
   /// @brief 阻塞连接计数
   uint32_t          blocking_count;
 
-  Connection_Group() : signal(nullptr), first_receiver(nullptr), next_group(nullptr) {}
+  Connection_Group() noexcept : signal(nullptr), first_receiver(nullptr), next_group(nullptr) {}
+  ~Connection_Group() noexcept {}
 };
 
 /// @brief 信号量结构体
@@ -100,13 +102,14 @@ struct Signal_Semaphore
   uint32_t          used;       /* 信号量已用数 */
   std::atomic_bool  is_timeout; /* 超时标志 */
 
-  Signal_Semaphore() : semaphore(), total(0), used(0), is_timeout(false) {}
+  Signal_Semaphore() noexcept : semaphore(), total(0), used(0), is_timeout(false) {}
+  ~Signal_Semaphore() noexcept {}
 };
 /// @brief 信号 哈希管理器
 class Signal_Hash_Table
 {
   // 禁止拷贝与移动
-  NO_COPY_MOVE(Signal_Hash_Table)
+  QAQ_NO_COPY_MOVE(Signal_Hash_Table)
 
   /// @brief 友元声明 信号管理器
   friend class Signal_Manager;
@@ -142,7 +145,7 @@ private:
    * @param  signal   信号指针
    * @return uint32_t 哈希值
    */
-  INLINE static O3 uint32_t get_hash(Signal_Base* signal) noexcept
+  QAQ_INLINE static QAQ_O3 uint32_t get_hash(Signal_Base* signal) noexcept
   {
     uintptr_t ptr_val = reinterpret_cast<uintptr_t>(signal);
     return (ptr_val ^ (ptr_val >> 9) ^ (ptr_val >> 18)) & (HASH_TABLE_SIZE - 1);
@@ -159,7 +162,7 @@ private:
    * @return Signal_Error_Code  连接结果
    */
   template <typename Handler>
-  signal::Signal_Error_Code O3 add_connection(Signal_Base* signal, object_internal::Object_Base* receiver, Handler handler, signal::Connection_Type type) noexcept
+  signal::Signal_Error_Code QAQ_O3 add_connection(Signal_Base* signal, object_internal::Object_Base* receiver, Handler handler, signal::Connection_Type type) noexcept
   {
     if (nullptr == receiver || nullptr == signal || nullptr == handler)
     {
@@ -179,11 +182,11 @@ private:
 
     if (nullptr == group)
     {
-      group = m_group_pool.malloc();
+      group = m_group_pool.allocate();
       if (nullptr == group)
       {
 #if (SYSTEM_ERROR_LOG_ENABLE && SIGNAL_ERROR_LOG_ENABLE)
-        System_Monitor::log_error(signal::Signal_Error_Code::OUT_OF_MEMORY, "Out of memory for connection group.");
+        QAQ_ERROR_LOG(signal::Signal_Error_Code::OUT_OF_MEMORY, "Out of memory for connection group.");
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && SIGNAL_ERROR_LOG_ENABLE) */
         return signal::Signal_Error_Code::OUT_OF_MEMORY;
       }
@@ -202,11 +205,11 @@ private:
       node = node->next_node;
     }
 
-    Receiver_Node* new_node = m_receiver_pool.malloc();
+    Receiver_Node* new_node = m_receiver_pool.allocate();
     if (nullptr == new_node)
     {
 #if (SYSTEM_ERROR_LOG_ENABLE && SIGNAL_ERROR_LOG_ENABLE)
-      System_Monitor::log_error(signal::Signal_Error_Code::OUT_OF_MEMORY, "Out of memory for receiver node.");
+      QAQ_ERROR_LOG(signal::Signal_Error_Code::OUT_OF_MEMORY, "Out of memory for receiver node.");
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && SIGNAL_ERROR_LOG_ENABLE) */
       return signal::Signal_Error_Code::OUT_OF_MEMORY;
     }
@@ -233,12 +236,12 @@ private:
    * @return Signal_Error_Code  连接结果
    */
   template <typename Handler>
-  signal::Signal_Error_Code O3 add_connection(Signal_Base* signal, Handler handler) noexcept
+  signal::Signal_Error_Code QAQ_O3 add_connection(Signal_Base* signal, Handler handler) noexcept
   {
     if (nullptr == signal || nullptr == handler)
     {
 #if (SYSTEM_ERROR_LOG_ENABLE && SIGNAL_ERROR_LOG_ENABLE)
-      System_Monitor::log_error(signal::Signal_Error_Code::NULL_POINTER, "Null pointer for signal or handler.");
+      QAQ_ERROR_LOG(signal::Signal_Error_Code::NULL_POINTER, "Null pointer for signal or handler.");
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && SIGNAL_ERROR_LOG_ENABLE) */
       return signal::Signal_Error_Code::NULL_POINTER;
     }
@@ -255,11 +258,11 @@ private:
 
     if (nullptr == group)
     {
-      group = m_group_pool.malloc();
+      group = m_group_pool.allocate();
       if (nullptr == group)
       {
 #if (SYSTEM_ERROR_LOG_ENABLE && SIGNAL_ERROR_LOG_ENABLE)
-        System_Monitor::log_error(signal::Signal_Error_Code::OUT_OF_MEMORY, "Out of memory for connection group.");
+        QAQ_ERROR_LOG(signal::Signal_Error_Code::OUT_OF_MEMORY, "Out of memory for connection group.");
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && SIGNAL_ERROR_LOG_ENABLE) */
         return signal::Signal_Error_Code::OUT_OF_MEMORY;
       }
@@ -278,11 +281,11 @@ private:
       node = node->next_node;
     }
 
-    Receiver_Node* new_node = m_receiver_pool.malloc();
+    Receiver_Node* new_node = m_receiver_pool.allocate();
     if (nullptr == new_node)
     {
 #if (SYSTEM_ERROR_LOG_ENABLE && SIGNAL_ERROR_LOG_ENABLE)
-      System_Monitor::log_error(signal::Signal_Error_Code::OUT_OF_MEMORY, "Out of memory for receiver node.");
+      QAQ_ERROR_LOG(signal::Signal_Error_Code::OUT_OF_MEMORY, "Out of memory for receiver node.");
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && SIGNAL_ERROR_LOG_ENABLE) */
       return signal::Signal_Error_Code::OUT_OF_MEMORY;
     }
@@ -300,12 +303,12 @@ private:
    * @param  signal   信号指针
    * @return uint32_t 阻塞连接数量
    */
-  uint32_t O3 get_blocking_connection_count(Signal_Base* signal) noexcept
+  uint32_t QAQ_O3 get_blocking_connection_count(Signal_Base* signal) noexcept
   {
     if (nullptr == signal)
     {
 #if (SYSTEM_ERROR_LOG_ENABLE && SIGNAL_ERROR_LOG_ENABLE)
-      System_Monitor::log_error(signal::Signal_Error_Code::NULL_POINTER, "Null pointer for signal.");
+      QAQ_ERROR_LOG(signal::Signal_Error_Code::NULL_POINTER, "Null pointer for signal.");
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && SIGNAL_ERROR_LOG_ENABLE) */
       return 0;
     }
@@ -333,12 +336,12 @@ private:
    * @return Signal_Error_Code  执行结果
    */
   template <typename Lambda>
-  signal::Signal_Error_Code O3 for_each_connection(Signal_Base* signal, Lambda&& executor) noexcept
+  signal::Signal_Error_Code QAQ_O3 for_each_connection(Signal_Base* signal, Lambda&& executor) noexcept
   {
     if (nullptr == signal)
     {
 #if (SYSTEM_ERROR_LOG_ENABLE && SIGNAL_ERROR_LOG_ENABLE)
-      System_Monitor::log_error(signal::Signal_Error_Code::NULL_POINTER, "Null pointer for signal.");
+      QAQ_ERROR_LOG(signal::Signal_Error_Code::NULL_POINTER, "Null pointer for signal.");
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && SIGNAL_ERROR_LOG_ENABLE) */
       return signal::Signal_Error_Code::NULL_POINTER;
     }
@@ -375,12 +378,12 @@ private:
    * @return uint32_t 移除连接数量
    */
   template <typename Handler>
-  uint32_t O3 remove_connection(Signal_Base* signal, object_internal::Object_Base* receiver, Handler handler) noexcept
+  uint32_t QAQ_O3 remove_connection(Signal_Base* signal, object_internal::Object_Base* receiver, Handler handler) noexcept
   {
     if (nullptr == receiver || nullptr == signal || nullptr == handler)
     {
 #if (SYSTEM_ERROR_LOG_ENABLE && SIGNAL_ERROR_LOG_ENABLE)
-      System_Monitor::log_error(signal::Signal_Error_Code::NULL_POINTER, "Null pointer for signal or handler.");
+      QAQ_ERROR_LOG(signal::Signal_Error_Code::NULL_POINTER, "Null pointer for signal or handler.");
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && SIGNAL_ERROR_LOG_ENABLE) */
       return 0;
     }
@@ -405,7 +408,7 @@ private:
         {
           Receiver_Node* node = *prev_node;
           *prev_node          = node->next_node;
-          m_receiver_pool.free(node);
+          m_receiver_pool.deallocate(node);
 
           if (node->type == signal::Connection_Type::Blocking_Queue_Connection)
             group->blocking_count--;
@@ -430,12 +433,12 @@ private:
    * @return uint32_t 移除连接数量
    */
   template <typename Handler>
-  uint32_t O3 remove_connection(Signal_Base* signal, Handler handler) noexcept
+  uint32_t QAQ_O3 remove_connection(Signal_Base* signal, Handler handler) noexcept
   {
     if (nullptr == signal || nullptr == handler)
     {
 #if (SYSTEM_ERROR_LOG_ENABLE && SIGNAL_ERROR_LOG_ENABLE)
-      System_Monitor::log_error(signal::Signal_Error_Code::NULL_POINTER, "Null pointer for signal or handler.");
+      QAQ_ERROR_LOG(signal::Signal_Error_Code::NULL_POINTER, "Null pointer for signal or handler.");
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && SIGNAL_ERROR_LOG_ENABLE) */
       return 0;
     }
@@ -460,7 +463,7 @@ private:
         {
           Receiver_Node* node = *prev_node;
           *prev_node          = node->next_node;
-          m_receiver_pool.free(node);
+          m_receiver_pool.deallocate(node);
           ++count;
         }
         else
@@ -478,12 +481,12 @@ private:
    * @param  signal   信号指针
    * @return uint32_t 移除连接数量
    */
-  uint32_t O3 remove_signal(Signal_Base* signal) noexcept
+  uint32_t QAQ_O3 remove_signal(Signal_Base* signal) noexcept
   {
     if (nullptr == signal)
     {
 #if (SYSTEM_ERROR_LOG_ENABLE && SIGNAL_ERROR_LOG_ENABLE)
-      System_Monitor::log_error(signal::Signal_Error_Code::NULL_POINTER, "Null pointer for signal.");
+      QAQ_ERROR_LOG(signal::Signal_Error_Code::NULL_POINTER, "Null pointer for signal.");
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && SIGNAL_ERROR_LOG_ENABLE) */
       return 0;
     }
@@ -504,10 +507,10 @@ private:
         {
           Receiver_Node* tmp = node;
           node               = node->next_node;
-          m_receiver_pool.free(tmp);
+          m_receiver_pool.deallocate(tmp);
         }
 
-        m_group_pool.free(group);
+        m_group_pool.deallocate(group);
         ++count;
         break;
       }
@@ -526,12 +529,12 @@ private:
    * @param  receiver 接收对象指针
    * @return uint32_t 移除连接数量
    */
-  uint32_t O3 remove_receiver(object_internal::Object_Base* receiver) noexcept
+  uint32_t QAQ_O3 remove_receiver(object_internal::Object_Base* receiver) noexcept
   {
     if (nullptr == receiver)
     {
 #if (SYSTEM_ERROR_LOG_ENABLE && SIGNAL_ERROR_LOG_ENABLE)
-      System_Monitor::log_error(signal::Signal_Error_Code::NULL_POINTER, "Null pointer for receiver.");
+      QAQ_ERROR_LOG(signal::Signal_Error_Code::NULL_POINTER, "Null pointer for receiver.");
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && SIGNAL_ERROR_LOG_ENABLE) */
       return 0;
     }
@@ -554,7 +557,7 @@ private:
             if (node->type == signal::Connection_Type::Blocking_Queue_Connection)
               group->blocking_count--;
 
-            m_receiver_pool.free(node);
+            m_receiver_pool.deallocate(node);
             ++count;
             break;
           }
@@ -585,10 +588,10 @@ private:
         while (nullptr != node)
         {
           Receiver_Node* next_node = node->next_node;
-          m_receiver_pool.free(node);
+          m_receiver_pool.deallocate(node);
           node = next_node;
         }
-        m_group_pool.free(group);
+        m_group_pool.deallocate(group);
         group = next_group;
       }
     }
@@ -624,7 +627,7 @@ struct Signal_Data : public Signal_Data_Base
    * @return true  执行成功
    * @return false 执行失败 - 对象已销毁
    */
-  bool O3 execute(void) override
+  bool QAQ_O3 execute(void) override
   {
     if (nullptr == receiver)
     {
@@ -645,7 +648,7 @@ struct Signal_Data : public Signal_Data_Base
    * @brief 内存释放
    *
    */
-  void O3 destroy(void) override
+  void QAQ_O3 destroy(void) override
   {
     deallocate(static_cast<void*>(this), sizeof(Signal_Data<Args...>));
   }
@@ -687,7 +690,7 @@ struct Signal_Blocking_Data : public Signal_Data_Base
    * @return true  执行成功
    * @return false 执行失败 - 对象已销毁
    */
-  bool O3 execute(void) override
+  bool QAQ_O3 execute(void) override
   {
     if (receiver->is_valid())
       (receiver->*function.member_function)(std::get<Args>(args)...);
@@ -701,7 +704,7 @@ struct Signal_Blocking_Data : public Signal_Data_Base
    * @brief 信号量释放
    *
    */
-  void O3 release(void)
+  void QAQ_O3 release(void)
   {
     semaphore->semaphore.release();
     semaphore->used++;
@@ -717,7 +720,7 @@ struct Signal_Blocking_Data : public Signal_Data_Base
    * @brief 内存释放
    *
    */
-  void O3 destroy(void) override
+  void QAQ_O3 destroy(void) override
   {
     release();
 
@@ -738,7 +741,7 @@ struct Signal_Blocking_Data : public Signal_Data_Base
 class Signal_Manager : public Signal_Manager_Base
 {
   // 禁止拷贝和移动
-  NO_COPY_MOVE(Signal_Manager)
+  QAQ_NO_COPY_MOVE(Signal_Manager)
 
   /// @brief 友元声明 信号类
   template <typename... Args>
@@ -763,19 +766,19 @@ private:
    * @param  size    申请大小
    * @return void*   指针
    */
-  void* O3 allocate(uint32_t size) noexcept
+  void* QAQ_O3 allocate(uint32_t size) noexcept
   {
     if (size <= MANAGER_MEMORY_POOL_SMALL_BLOCK_COUNT)
     {
-      return m_small_block_pool.malloc();
+      return m_small_block_pool.allocate();
     }
     else if (size <= MANAGER_MEMORY_POOL_LARGE_BLOCK_SIZE)
     {
-      return m_large_block_pool.malloc();
+      return m_large_block_pool.allocate();
     }
     else
     {
-      return m_byte_pool.malloc(size);
+      return m_byte_pool.allocate(size);
     }
   }
 
@@ -785,21 +788,21 @@ private:
    * @param ptr   释放指针
    * @param size  释放大小
    */
-  void O3 deallocate(void* ptr, uint32_t size) noexcept override
+  void QAQ_O3 deallocate(void* ptr, uint32_t size) noexcept override
   {
     if (ptr)
     {
       if (size <= MANAGER_MEMORY_POOL_SMALL_BLOCK_COUNT)
       {
-        m_small_block_pool.free(ptr);
+        m_small_block_pool.deallocate(ptr);
       }
       else if (size <= MANAGER_MEMORY_POOL_LARGE_BLOCK_SIZE)
       {
-        m_large_block_pool.free(ptr);
+        m_large_block_pool.deallocate(ptr);
       }
       else
       {
-        m_byte_pool.free(ptr);
+        m_byte_pool.deallocate(ptr);
       }
     }
   }
@@ -809,9 +812,9 @@ private:
    *
    * @param semaphore 信号量指针
    */
-  void O3 deallocate_semaphore(void* semaphore) noexcept override
+  void QAQ_O3 deallocate_semaphore(void* semaphore) noexcept override
   {
-    m_semaphore_pool.free(static_cast<Signal_Semaphore*>(semaphore));
+    m_semaphore_pool.deallocate(static_cast<Signal_Semaphore*>(semaphore));
   }
 
   /**
@@ -902,7 +905,7 @@ private:
       {
         package.release();
 #if (SYSTEM_ERROR_LOG_ENABLE && SIGNAL_ERROR_LOG_ENABLE)
-        System_Monitor::log_error(signal::Signal_Error_Code::OBJECT_DESTROYED, "Object destroyed.");
+        QAQ_ERROR_LOG(signal::Signal_Error_Code::OBJECT_DESTROYED, "Object destroyed.");
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && SIGNAL_ERROR_LOG_ENABLE) */
         return signal::Signal_Error_Code::OBJECT_DESTROYED;
       }
@@ -924,7 +927,7 @@ private:
         }
 
 #if (SYSTEM_ERROR_LOG_ENABLE && SIGNAL_ERROR_LOG_ENABLE)
-        System_Monitor::log_error(signal::Signal_Error_Code::OUT_OF_MEMORY, "Out of memory for signal.");
+        QAQ_ERROR_LOG(signal::Signal_Error_Code::OUT_OF_MEMORY, "Out of memory for signal.");
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && SIGNAL_ERROR_LOG_ENABLE) */
         return signal::Signal_Error_Code::OUT_OF_MEMORY;
       }
@@ -941,7 +944,7 @@ private:
         {
           package->destroy();
 #if (SYSTEM_ERROR_LOG_ENABLE && SIGNAL_ERROR_LOG_ENABLE)
-          System_Monitor::log_error(signal::Signal_Error_Code::QUEUE_FULL, "Signal queue full.");
+          QAQ_ERROR_LOG(signal::Signal_Error_Code::QUEUE_FULL, "Signal queue full.");
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && SIGNAL_ERROR_LOG_ENABLE) */
           return signal::Signal_Error_Code::QUEUE_FULL;
         }
@@ -954,7 +957,7 @@ private:
         {
           package->destroy();
 #if (SYSTEM_ERROR_LOG_ENABLE && SIGNAL_ERROR_LOG_ENABLE)
-          System_Monitor::log_error(signal::Signal_Error_Code::QUEUE_FULL, "Signal queue full.");
+          QAQ_ERROR_LOG(signal::Signal_Error_Code::QUEUE_FULL, "Signal queue full.");
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && SIGNAL_ERROR_LOG_ENABLE) */
           return signal::Signal_Error_Code::QUEUE_FULL;
         }
@@ -974,7 +977,7 @@ private:
       else
       {
 #if (SYSTEM_ERROR_LOG_ENABLE && SIGNAL_ERROR_LOG_ENABLE)
-        System_Monitor::log_error(signal::Signal_Error_Code::OBJECT_DESTROYED, "Object destroyed.");
+        QAQ_ERROR_LOG(signal::Signal_Error_Code::OBJECT_DESTROYED, "Object destroyed.");
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && SIGNAL_ERROR_LOG_ENABLE) */
         return signal::Signal_Error_Code::OBJECT_DESTROYED;
       }
@@ -987,7 +990,7 @@ private:
       if (nullptr == ptr)
       {
 #if (SYSTEM_ERROR_LOG_ENABLE && SIGNAL_ERROR_LOG_ENABLE)
-        System_Monitor::log_error(signal::Signal_Error_Code::OUT_OF_MEMORY, "Out of memory for signal.");
+        QAQ_ERROR_LOG(signal::Signal_Error_Code::OUT_OF_MEMORY, "Out of memory for signal.");
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && SIGNAL_ERROR_LOG_ENABLE) */
         return signal::Signal_Error_Code::OUT_OF_MEMORY;
       }
@@ -1004,7 +1007,7 @@ private:
         {
           package->destroy();
 #if (SYSTEM_ERROR_LOG_ENABLE && SIGNAL_ERROR_LOG_ENABLE)
-          System_Monitor::log_error(signal::Signal_Error_Code::QUEUE_FULL, "Signal queue full.");
+          QAQ_ERROR_LOG(signal::Signal_Error_Code::QUEUE_FULL, "Signal queue full.");
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && SIGNAL_ERROR_LOG_ENABLE) */
           return signal::Signal_Error_Code::QUEUE_FULL;
         }
@@ -1017,7 +1020,7 @@ private:
         {
           package->destroy();
 #if (SYSTEM_ERROR_LOG_ENABLE && SIGNAL_ERROR_LOG_ENABLE)
-          System_Monitor::log_error(signal::Signal_Error_Code::QUEUE_FULL, "Signal queue full.");
+          QAQ_ERROR_LOG(signal::Signal_Error_Code::QUEUE_FULL, "Signal queue full.");
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && SIGNAL_ERROR_LOG_ENABLE) */
           return signal::Signal_Error_Code::QUEUE_FULL;
         }
@@ -1041,7 +1044,7 @@ private:
     if (nullptr == receiver)
     {
 #if (SYSTEM_ERROR_LOG_ENABLE && SIGNAL_ERROR_LOG_ENABLE)
-      System_Monitor::log_error(signal::Signal_Error_Code::NULL_POINTER, "Receiver is null pointer.");
+      QAQ_ERROR_LOG(signal::Signal_Error_Code::NULL_POINTER, "Receiver is null pointer.");
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && SIGNAL_ERROR_LOG_ENABLE) */
       return signal::Signal_Error_Code::NULL_POINTER;
     }
@@ -1053,7 +1056,7 @@ private:
         if (!receiver->get_affinity_thread()->has_signal_queue())
         {
 #if (SYSTEM_ERROR_LOG_ENABLE && SIGNAL_ERROR_LOG_ENABLE)
-          System_Monitor::log_error(signal::Signal_Error_Code::RECEIVE_AFFINITY_THREAD_NO_QUEUE, "Receiver affinity thread has no signal queue.");
+          QAQ_ERROR_LOG(signal::Signal_Error_Code::RECEIVE_AFFINITY_THREAD_NO_QUEUE, "Receiver affinity thread has no signal queue.");
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && SIGNAL_ERROR_LOG_ENABLE) */
           return signal::Signal_Error_Code::RECEIVE_AFFINITY_THREAD_NO_QUEUE;
         }
@@ -1063,7 +1066,7 @@ private:
         if (!receiver->has_signal_queue())
         {
 #if (SYSTEM_ERROR_LOG_ENABLE && SIGNAL_ERROR_LOG_ENABLE)
-          System_Monitor::log_error(signal::Signal_Error_Code::RECEIVE_NO_QUEUE, "Receiver has no signal queue.");
+          QAQ_ERROR_LOG(signal::Signal_Error_Code::RECEIVE_NO_QUEUE, "Receiver has no signal queue.");
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && SIGNAL_ERROR_LOG_ENABLE) */
           return signal::Signal_Error_Code::RECEIVE_NO_QUEUE;
         }
@@ -1074,7 +1077,7 @@ private:
       if (!receiver->has_signal_queue())
       {
 #if (SYSTEM_ERROR_LOG_ENABLE && SIGNAL_ERROR_LOG_ENABLE)
-        System_Monitor::log_error(signal::Signal_Error_Code::RECEIVE_NO_QUEUE, "Receiver has no signal queue.");
+        QAQ_ERROR_LOG(signal::Signal_Error_Code::RECEIVE_NO_QUEUE, "Receiver has no signal queue.");
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && SIGNAL_ERROR_LOG_ENABLE) */
         return signal::Signal_Error_Code::RECEIVE_NO_QUEUE;
       }
@@ -1086,7 +1089,7 @@ private:
         if (!receiver->get_affinity_thread()->has_signal_queue())
         {
 #if (SYSTEM_ERROR_LOG_ENABLE && SIGNAL_ERROR_LOG_ENABLE)
-          System_Monitor::log_error(signal::Signal_Error_Code::RECEIVE_AFFINITY_THREAD_NO_QUEUE, "Receiver affinity thread has no signal queue.");
+          QAQ_ERROR_LOG(signal::Signal_Error_Code::RECEIVE_AFFINITY_THREAD_NO_QUEUE, "Receiver affinity thread has no signal queue.");
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && SIGNAL_ERROR_LOG_ENABLE) */
           return signal::Signal_Error_Code::RECEIVE_AFFINITY_THREAD_NO_QUEUE;
         }
@@ -1094,7 +1097,7 @@ private:
       else
       {
 #if (SYSTEM_ERROR_LOG_ENABLE && SIGNAL_ERROR_LOG_ENABLE)
-        System_Monitor::log_error(signal::Signal_Error_Code::RECEIVE_NO_AFFINITY_THREAD, "Receiver has no affinity thread.");
+        QAQ_ERROR_LOG(signal::Signal_Error_Code::RECEIVE_NO_AFFINITY_THREAD, "Receiver has no affinity thread.");
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && SIGNAL_ERROR_LOG_ENABLE) */
         return signal::Signal_Error_Code::RECEIVE_NO_AFFINITY_THREAD;
       }
@@ -1108,7 +1111,7 @@ private:
    *
    * @param signal   信号指针
    */
-  void O3 disconnect_signal(Signal_Base* signal) noexcept override
+  void QAQ_O3 disconnect_signal(Signal_Base* signal) noexcept override
   {
     m_hash_table.remove_signal(signal);
   }
@@ -1118,7 +1121,7 @@ private:
    *
    * @param receiver 接收对象指针
    */
-  void O3 disconnect_receiver(object_internal::Object_Base* receiver) noexcept override
+  void QAQ_O3 disconnect_receiver(object_internal::Object_Base* receiver) noexcept override
   {
     m_hash_table.remove_receiver(receiver);
   }
@@ -1136,7 +1139,7 @@ private:
    * @return Signal_Error_Code  连接结果
    */
   template <typename Signal, typename Receiver, typename Handler>
-  system::signal::Signal_Error_Code O3 connect(Signal* signal, Receiver* receiver, Handler handler, system::signal::Connection_Type type) noexcept
+  system::signal::Signal_Error_Code QAQ_O3 connect(Signal* signal, Receiver* receiver, Handler handler, system::signal::Connection_Type type) noexcept
   {
     /// @note 类型检查 是否为信号
     static_assert(std::is_base_of_v<Signal_Base, Signal>, "Signal type mismatch");
@@ -1156,7 +1159,7 @@ private:
    * @return Signal_Error_Code  连接结果
    */
   template <typename Signal, typename Handler>
-  system::signal::Signal_Error_Code O3 connect(Signal* signal, Handler handler) noexcept
+  system::signal::Signal_Error_Code QAQ_O3 connect(Signal* signal, Handler handler) noexcept
   {
     /// @note 类型检查 是否为信号
     static_assert(std::is_base_of_v<Signal_Base, Signal>, "Signal type mismatch");
@@ -1176,7 +1179,7 @@ private:
    * @return uint32_t 移除连接数量
    */
   template <typename Signal, typename Receiver, typename Handler>
-  uint32_t O3 disconnect(Signal* signal, Receiver* receiver, Handler handler) noexcept
+  uint32_t QAQ_O3 disconnect(Signal* signal, Receiver* receiver, Handler handler) noexcept
   {
     /// @note 类型检查 是否为信号
     static_assert(std::is_base_of_v<Signal_Base, Signal>, "Signal type mismatch");
@@ -1194,7 +1197,7 @@ private:
    * @return uint32_t 移除连接数量
    */
   template <typename Signal, typename Handler>
-  uint32_t O3 disconnect(Signal* signal, Handler handler) noexcept
+  uint32_t QAQ_O3 disconnect(Signal* signal, Handler handler) noexcept
   {
     /// @note 类型检查 是否为信号
     static_assert(std::is_base_of_v<Signal_Base, Signal>, "Signal type mismatch");
@@ -1213,7 +1216,7 @@ private:
    * @return Signal_Error_Code  发送结果
    */
   template <typename Signal, typename... Args>
-  system::signal::Signal_Error_Code O3 emit(Signal_Semaphore** semaphore, Signal* signal, Args&&... args) noexcept
+  system::signal::Signal_Error_Code QAQ_O3 emit(Signal_Semaphore** semaphore, Signal* signal, Args&&... args) noexcept
   {
     /// @note 类型检查 是否为信号
     static_assert(std::is_base_of_v<Signal_Base, Signal>, "Signal type mismatch");
@@ -1223,12 +1226,12 @@ private:
     uint32_t blocking_count = m_hash_table.get_blocking_connection_count(signal);
     if (0 != blocking_count)
     {
-      *semaphore = m_semaphore_pool.malloc();
+      *semaphore = m_semaphore_pool.allocate();
       if (nullptr == *semaphore)
       {
         blocking_count = 0;
 #if (SYSTEM_ERROR_LOG_ENABLE && SIGNAL_ERROR_LOG_ENABLE)
-        System_Monitor::log_error(system::signal::Signal_Error_Code::OUT_OF_MEMORY, "Out of memory for semaphore.");
+        QAQ_ERROR_LOG(system::signal::Signal_Error_Code::OUT_OF_MEMORY, "Out of memory for semaphore.");
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && SIGNAL_ERROR_LOG_ENABLE) */
         return system::signal::Signal_Error_Code::OUT_OF_MEMORY;
       }

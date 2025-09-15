@@ -311,7 +311,7 @@ class Uart_Config : public interrupt::Interrupt_Device
   static_assert(Uart_Type::DMA_Double_Buffer != Tx_Type, "Transmit type not support DMA_Double_Buffer");
 
   // 禁止拷贝和移动
-  NO_COPY_MOVE(Uart_Config)
+  QAQ_NO_COPY_MOVE(Uart_Config)
 
 private:
   /// @brief 友元类声明 Uart_Base 模版类
@@ -547,7 +547,7 @@ private:
    */
   static void irq_queue_handle(interrupt::Interrupt_Args_t, uint8_t flag)
   {
-    if constexpr (Uart_Type::Normal != Rx_Type)
+    if constexpr (Uart_Type::Interrupt != Rx_Type)
     {
       if (IDLE == flag)
       {

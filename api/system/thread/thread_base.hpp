@@ -20,7 +20,7 @@ namespace thread_internal
 class Thread_Base
 {
   // 禁止拷贝和移动
-  NO_COPY_MOVE(Thread_Base)
+  QAQ_NO_COPY_MOVE(Thread_Base)
 
 public:
   /**

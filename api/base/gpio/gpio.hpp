@@ -167,7 +167,7 @@ class Gpio_Base
   // 引脚号合法性判断
   static_assert(pin < 16U, "Invalid pin number");
   // 禁止拷贝和移动
-  NO_COPY_MOVE(Gpio_Base)
+  QAQ_NO_COPY_MOVE(Gpio_Base)
 
 private:
   // 端口寄存器类型声明
@@ -688,7 +688,7 @@ class Gpio : public base_internal::gpio_internal::Gpio_Base<port, pin, speed>
   // 基类类型
   using Base = base_internal::gpio_internal::Gpio_Base<port, pin, speed>;
   // 禁止拷贝和移动
-  NO_COPY_MOVE(Gpio)
+  QAQ_NO_COPY_MOVE(Gpio)
 
 public:
   /**

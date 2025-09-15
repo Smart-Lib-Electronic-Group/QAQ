@@ -15,7 +15,7 @@ namespace device
 class Direct_Device : public system_internal::device_internal::Direct_Device_Base
 {
   // 禁止拷贝和移动
-  NO_COPY_MOVE(Direct_Device)
+  QAQ_NO_COPY_MOVE(Direct_Device)
 
 private:
   /// @brief 设备事件标志位
@@ -117,6 +117,10 @@ public:
           {
             m_event_flags.clear(static_cast<uint32_t>(Bits::Receive_Finish));
           }
+          else if (0 != timeout_ms)
+          {
+            post_event(static_cast<uint32_t>(Bits::Receive_Timeout));
+          }
         }
       }
     }
@@ -134,10 +138,10 @@ public:
    */
   int64_t write(const void* data, uint32_t size, uint32_t timeout_ms = 0) override
   {
-    int64_t  ret           = 0;
-    uint32_t event_bits    = 0;
-    bool     need_transfer = false;
-    const uint8_t* data_ptr = reinterpret_cast<const uint8_t*>(data);
+    int64_t        ret           = 0;
+    uint32_t       event_bits    = 0;
+    bool           need_transfer = false;
+    const uint8_t* data_ptr      = reinterpret_cast<const uint8_t*>(data);
 
     if (!m_opened)
     {

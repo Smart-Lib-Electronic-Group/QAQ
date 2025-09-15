@@ -38,7 +38,7 @@ private:
    * @return true   字符为空白字符
    * @return false  字符不为空白字符
    */
-  static const bool O3 is_space(char c) noexcept
+  static const bool QAQ_O3 is_space(char c) noexcept
   {
     return c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == '\f' || c == '\v';
   }
@@ -50,7 +50,7 @@ private:
    * @return true   字符为数字字符
    * @return false  字符不为数字字符
    */
-  static const bool O3 is_digit(char c) noexcept
+  static const bool QAQ_O3 is_digit(char c) noexcept
   {
     return c >= '0' && c <= '9';
   }
@@ -62,7 +62,7 @@ private:
    * @return true   字符为字母字符
    * @return false  字符不为字母字符
    */
-  static const bool O3 is_alpha(char c) noexcept
+  static const bool QAQ_O3 is_alpha(char c) noexcept
   {
     return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
   }
@@ -74,7 +74,7 @@ private:
    * @return true   字符为大写字母
    * @return false  字符不为大写字母
    */
-  static const bool O3 is_upper(char c) noexcept
+  static const bool QAQ_O3 is_upper(char c) noexcept
   {
     return c >= 'A' && c <= 'Z';
   }
@@ -86,7 +86,7 @@ private:
    * @return true   字符为小写字母
    * @return false  字符不为小写字母
    */
-  static const bool O3 is_lower(char c) noexcept
+  static const bool QAQ_O3 is_lower(char c) noexcept
   {
     return c >= 'a' && c <= 'z';
   }
@@ -95,7 +95,7 @@ private:
   /**
    * @brief  动态字符串 使用Boyer-Moore-Horspool算法正向查找
    */
-  static const char* O3 bmh_find(const char* text, uint32_t text_len, const char* pattern, uint32_t pattern_len) noexcept
+  static const char* QAQ_O3 bmh_find(const char* text, uint32_t text_len, const char* pattern, uint32_t pattern_len) noexcept
   {
     if (0 == pattern_len)
       return text;
@@ -138,7 +138,7 @@ private:
   /**
    * @brief  动态字符串 使用Boyer-Moore-Horspool算法反向查找
    */
-  static const char* O3 bmh_rfind(const char* text, uint32_t text_len, const char* pattern, uint32_t pattern_len) noexcept
+  static const char* QAQ_O3 bmh_rfind(const char* text, uint32_t text_len, const char* pattern, uint32_t pattern_len) noexcept
   {
     if (0 == pattern_len)
       return text + text_len;

@@ -65,9 +65,10 @@ enum class Device_Event_Bits : uint32_t
   Transmit_Finish = 0x02, /* 传输完成 */
   Enable_Receive  = 0x04, /* 使能接收 */
   Receive_Finish  = 0x08, /* 接收完成 */
-  Close           = 0x10, /* 关闭 */
-  Error           = 0x20, /* 错误 */
-  All             = 0x3F, /* 所有事件 */
+  Receive_Timeout = 0x10, /* 接收超时 */
+  Close           = 0x20, /* 关闭 */
+  Error           = 0x40, /* 错误 */
+  All             = 0xFF, /* 所有事件 */
 };
 
 /**
@@ -130,7 +131,7 @@ protected:
    * @param  param              配置参数
    * @return const uint32_t     配置值
    */
-  virtual const uint32_t get_config_impl(uint32_t param)                        = 0;
+  virtual uint32_t get_config_impl(uint32_t param) const                        = 0;
 
 public:
   /**
@@ -215,7 +216,7 @@ public:
    * @param  param              配置参数
    * @return uint32_t           配置值
    */
-  const uint32_t get_config(uint32_t param)
+  uint32_t get_config(uint32_t param) const
   {
     uint32_t ret_value = 0;
 
@@ -287,7 +288,7 @@ public:
    * @param  timeout_ms         刷新数据超时时间
    * @return Device_Error_Code  设备错误码
    */
-  virtual device::Device_Error_Code flush(uint32_t timeout_ms = TX_WAIT_FOREVER)     = 0;
+  virtual device::Device_Error_Code flush(uint32_t timeout_ms = TX_WAIT_FOREVER)  = 0;
 };
 } /* namespace device_internal */
 } /* namespace system_internal */

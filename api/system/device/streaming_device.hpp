@@ -40,7 +40,7 @@ class Stream_Device<Stream_Type::READ_ONLY, In_Buf_Size, Out_Buf_Size, In_Buf_Mo
   static_assert(Out_Buf_Size == 0, "Output buffer size must be 0");
 
   // 禁止拷贝和移动
-  NO_COPY_MOVE(Stream_Device)
+  QAQ_NO_COPY_MOVE(Stream_Device)
 
 private:
   /// @brief 设备事件标志位
@@ -343,7 +343,7 @@ class Stream_Device<Stream_Type::WRITE_ONLY, In_Buf_Size, 0, In_Buf_Mode> : publ
   static_assert(In_Buf_Size == 0, "In_Buf_Size must be 0");
 
   // 禁止拷贝和移动
-  NO_COPY_MOVE(Stream_Device)
+  QAQ_NO_COPY_MOVE(Stream_Device)
 
 private:
   /// @brief 设备事件标志位
@@ -508,7 +508,7 @@ class Stream_Device<Stream_Type::WRITE_ONLY, In_Buf_Size, Out_Buf_Size, In_Buf_M
   static_assert(In_Buf_Size == 0, "In_Buf_Size must be 0");
 
   // 禁止拷贝和移动
-  NO_COPY_MOVE(Stream_Device)
+  QAQ_NO_COPY_MOVE(Stream_Device)
 
 private:
   /// @brief 设备事件标志位
@@ -681,7 +681,7 @@ class Stream_Device<Stream_Type::READ_WRITE, In_Buf_Size, 0, In_Buf_Mode> : publ
   static_assert(In_Buf_Size > 0, "Input buffer size must be greater than 0");
 
   // 禁止拷贝和移动
-  NO_COPY_MOVE(Stream_Device)
+  QAQ_NO_COPY_MOVE(Stream_Device)
 
 private:
   /// @brief 设备事件标志位
@@ -873,10 +873,10 @@ public:
    */
   int64_t write(const void* data, uint32_t size, uint32_t timeout_ms = 0) override
   {
-    int64_t  ret           = 0;
-    uint32_t event_bits    = 0;
-    bool     need_transfer = false;
-    const uint8_t* data_ptr = reinterpret_cast<const uint8_t*>(data);
+    int64_t        ret           = 0;
+    uint32_t       event_bits    = 0;
+    bool           need_transfer = false;
+    const uint8_t* data_ptr      = reinterpret_cast<const uint8_t*>(data);
 
     if (!m_opened)
     {
@@ -1041,8 +1041,8 @@ public:
    */
   int64_t peek(void* data, uint32_t request, uint32_t timeout_ms = 0)
   {
-    int64_t ret = 0;
-    uint8_t * data_ptr = reinterpret_cast<uint8_t*>(data);
+    int64_t  ret      = 0;
+    uint8_t* data_ptr = reinterpret_cast<uint8_t*>(data);
 
     if (!m_opened)
     {
@@ -1097,7 +1097,7 @@ class Stream_Device<Stream_Type::READ_WRITE, In_Buf_Size, Out_Buf_Size, In_Buf_M
   static_assert(In_Buf_Size > 0, "Input buffer size must be greater than 0");
 
   // 禁止拷贝和移动
-  NO_COPY_MOVE(Stream_Device)
+  QAQ_NO_COPY_MOVE(Stream_Device)
 
 private:
   /// @brief 设备事件标志位
@@ -1257,8 +1257,8 @@ public:
    */
   int64_t read(void* data, uint32_t size, uint32_t timeout_ms = TX_WAIT_FOREVER) override
   {
-    int64_t ret = 0;
-    uint8_t * data_ptr = reinterpret_cast<uint8_t*>(data);
+    int64_t  ret      = 0;
+    uint8_t* data_ptr = reinterpret_cast<uint8_t*>(data);
 
     if (!m_opened)
     {
@@ -1302,7 +1302,7 @@ public:
    */
   int64_t write(const void* data, uint32_t size, uint32_t timeout_ms = 0) override
   {
-    int64_t ret = 0;
+    int64_t        ret      = 0;
     const uint8_t* data_ptr = static_cast<const uint8_t*>(data);
 
     if (!m_opened)
@@ -1465,8 +1465,8 @@ public:
    */
   int64_t peek(void* data, uint32_t request, uint32_t timeout_ms = 0)
   {
-    int64_t ret = 0;
-    uint8_t * data_ptr = reinterpret_cast<uint8_t*>(data);
+    int64_t  ret      = 0;
+    uint8_t* data_ptr = reinterpret_cast<uint8_t*>(data);
 
     if (!m_opened)
     {

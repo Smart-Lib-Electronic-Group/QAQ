@@ -48,7 +48,7 @@ namespace object_internal
 class Object_Base
 {
   // 禁止拷贝和移动
-  NO_COPY_MOVE(Object_Base)
+  QAQ_NO_COPY_MOVE(Object_Base)
 
 private:
   /// @brief 友元声明 信号管理器

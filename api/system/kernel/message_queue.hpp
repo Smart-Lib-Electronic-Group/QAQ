@@ -26,7 +26,7 @@ class Message_Queue final
   // 消息队列元素类型必须是平凡类型
   static_assert(std::is_trivial_v<T>, "Message_Queue element type must be trivial");
   // 禁止拷贝和移动
-  NO_COPY_MOVE(Message_Queue)
+  QAQ_NO_COPY_MOVE(Message_Queue)
 
 private:
   /// @brief 消息队列默认名称
@@ -34,7 +34,7 @@ private:
   /// @brief 消息队列句柄
   TX_QUEUE                           m_queue;
   /// @brief 消息队列缓冲区
-  uint8_t                            m_buffer[sizeof(T) * size] ALIGN(32);
+  uint8_t                            m_buffer[sizeof(T) * size] QAQ_ALIGN(32);
 
 public:
   /// @brief 消息队列 状态
@@ -51,7 +51,7 @@ public:
    *
    * @param name    消息队列名称
    */
-  explicit O3 Message_Queue(const char* name = default_name)
+  explicit QAQ_O3 Message_Queue(const char* name = default_name)
   {
 #if (SYSTEM_ERROR_LOG_ENABLE && MESSAGE_QUEUE_ERROR_LOG_ENABLE)
     const UINT status = tx_queue_create(&m_queue, const_cast<CHAR*>(name), sizeof(T), m_buffer, sizeof(m_buffer));
@@ -68,9 +68,9 @@ public:
    * @param  timeout 发送超时时间
    * @return Status  状态
    */
-  Status O3 send(const T& message, uint32_t timeout = TX_WAIT_FOREVER)
+  Status QAQ_O3 send(const T& message, uint32_t timeout = TX_WAIT_FOREVER)
   {
-    if (IS_IN_ISR || IS_IN_TIMER)
+    if (QAQ_IS_IN_ISR || QAQ_IS_IN_TIMER)
     {
       timeout = 0;
     }
@@ -87,7 +87,7 @@ public:
     else
     {
 #if (SYSTEM_ERROR_LOG_ENABLE && MESSAGE_QUEUE_ERROR_LOG_ENABLE)
-      system::System_Monitor::log_error(status, "Message_Queue send failed");
+      QAQ_ERROR_LOG(status, "Message_Queue send failed");
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && MESSAGE_QUEUE_ERROR_LOG_ENABLE) */
       return Status::ERROR;
     }
@@ -100,9 +100,9 @@ public:
    * @param  timeout 发送超时时间
    * @return Status  状态
    */
-  Status O3 send_front(const T& message, uint32_t timeout = TX_WAIT_FOREVER)
+  Status QAQ_O3 send_front(const T& message, uint32_t timeout = TX_WAIT_FOREVER)
   {
-    if (IS_IN_ISR || IS_IN_TIMER)
+    if (QAQ_IS_IN_ISR || QAQ_IS_IN_TIMER)
     {
       timeout = 0;
     }
@@ -119,7 +119,7 @@ public:
     else
     {
 #if (SYSTEM_ERROR_LOG_ENABLE && MESSAGE_QUEUE_ERROR_LOG_ENABLE)
-      system::System_Monitor::log_error(status, "Message_Queue send_front failed");
+      QAQ_ERROR_LOG(status, "Message_Queue send_front failed");
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && MESSAGE_QUEUE_ERROR_LOG_ENABLE) */
       return Status::ERROR;
     }
@@ -132,9 +132,9 @@ public:
    * @param  timeout 接收超时时间
    * @return Status  状态
    */
-  Status O3 receive(T& message, uint32_t timeout = TX_WAIT_FOREVER)
+  Status QAQ_O3 receive(T& message, uint32_t timeout = TX_WAIT_FOREVER)
   {
-    if (IS_IN_ISR || IS_IN_TIMER)
+    if (QAQ_IS_IN_ISR || QAQ_IS_IN_TIMER)
     {
       timeout = 0;
     }
@@ -151,7 +151,7 @@ public:
     else
     {
 #if (SYSTEM_ERROR_LOG_ENABLE && MESSAGE_QUEUE_ERROR_LOG_ENABLE)
-      system::System_Monitor::log_error(status, "Message_Queue receive failed");
+      QAQ_ERROR_LOG(status, "Message_Queue receive failed");
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && MESSAGE_QUEUE_ERROR_LOG_ENABLE) */
       return Status::ERROR;
     }
@@ -162,7 +162,7 @@ public:
    *
    * @return Status  状态
    */
-  Status O3 clear()
+  Status QAQ_O3 clear()
   {
     const UINT status = tx_queue_flush(&m_queue);
     if (status == TX_SUCCESS)
@@ -172,7 +172,7 @@ public:
     else
     {
 #if (SYSTEM_ERROR_LOG_ENABLE && MESSAGE_QUEUE_ERROR_LOG_ENABLE)
-      system::System_Monitor::log_error(status, "Message_Queue clear failed");
+      QAQ_ERROR_LOG(status, "Message_Queue clear failed");
 #endif /* (SYSTEM_ERROR_LOG_ENABLE && MESSAGE_QUEUE_ERROR_LOG_ENABLE) */
       return Status::ERROR;
     }
@@ -183,7 +183,7 @@ public:
    *
    * @return uint32_t 剩余空间大小
    */
-  uint32_t O3 available() const
+  uint32_t QAQ_O3 available() const
   {
     return m_queue.tx_queue_available_storage / sizeof(T);
   }
@@ -193,7 +193,7 @@ public:
    *
    * @return uint32_t 消息数量
    */
-  uint32_t O3 enqueued() const
+  uint32_t QAQ_O3 enqueued() const
   {
     return m_queue.tx_queue_enqueued / sizeof(T);
   }
@@ -203,7 +203,7 @@ public:
    *
    * @return uint32_t 容量大小
    */
-  uint32_t O3 capacity() const
+  uint32_t QAQ_O3 capacity() const
   {
     return size;
   }
@@ -214,7 +214,7 @@ public:
    * @return true    为空
    * @return false   不为空
    */
-  bool O3 empty() const
+  bool QAQ_O3 empty() const
   {
     return m_queue.tx_queue_enqueued == 0;
   }
@@ -225,7 +225,7 @@ public:
    * @return true    已满
    * @return false   不满
    */
-  bool O3 full() const
+  bool QAQ_O3 full() const
   {
     return m_queue.tx_queue_available_storage == 0;
   }
@@ -237,7 +237,7 @@ public:
    *
    * @return ULONG   发送总次数
    */
-  uint32_t O3 total_send() const
+  uint32_t QAQ_O3 total_send() const
   {
     ULONG      count;
     const UINT status = tx_queue_performance_info_get(&m_queue, &count, TX_NULL, TX_NULL, TX_NULL, TX_NULL, TX_NULL);
@@ -252,7 +252,7 @@ public:
    *
    * @return ULONG   接收总次数
    */
-  uint32_t O3 total_recv() const
+  uint32_t QAQ_O3 total_recv() const
   {
     ULONG      count;
     const UINT status = tx_queue_performance_info_get(&m_queue, TX_NULL, &count, TX_NULL, TX_NULL, TX_NULL, TX_NULL);

@@ -40,7 +40,7 @@ private:
    * @param  exp     指数
    * @return double  10的exp次幂
    */
-  static INLINE double O3 fast_pow_10(int exponent)
+  static QAQ_INLINE double QAQ_O3 fast_pow_10(int exponent)
   {
     if (exponent >= 0 && exponent < static_cast<int>(sizeof(pow_10_positive) / sizeof(pow_10_positive[0])))
     {
@@ -64,7 +64,7 @@ private:
    * @param  n    比较的长度
    * @return int  等于0则相等
    */
-  static INLINE int O3 fast_strncasecmp(const char* s1, const char* s2, size_t n)
+  static QAQ_INLINE int QAQ_O3 fast_strncasecmp(const char* s1, const char* s2, size_t n)
   {
     if (n == 0)
       return 0;
@@ -104,7 +104,7 @@ private:
    * @return false  解析失败
    */
   template <typename T>
-  static INLINE bool O3 parse_as_bin(const char* str, uint32_t len, T& result, const char** endptr = nullptr)
+  static QAQ_INLINE bool QAQ_O3 parse_as_bin(const char* str, uint32_t len, T& result, const char** endptr = nullptr)
   {
     static_assert(std::is_integral<T>::value, "T must be integral type");
 
@@ -219,7 +219,7 @@ private:
    * @return
    */
   template <typename T>
-  static INLINE bool O3 parse_as_oct(const char* str, uint32_t len, T& result, const char** endptr = nullptr)
+  static QAQ_INLINE bool QAQ_O3 parse_as_oct(const char* str, uint32_t len, T& result, const char** endptr = nullptr)
   {
     static_assert(std::is_integral<T>::value, "T must be integral type");
 
@@ -333,7 +333,7 @@ private:
    * @return
    */
   template <typename T>
-  static INLINE bool O3 parse_as_dec(const char* str, uint32_t len, T& result, const char** endptr = nullptr)
+  static QAQ_INLINE bool QAQ_O3 parse_as_dec(const char* str, uint32_t len, T& result, const char** endptr = nullptr)
   {
     static_assert(std::is_integral<T>::value, "T must be integral type");
 
@@ -473,7 +473,7 @@ private:
    * @return false  解析失败
    */
   template <typename T>
-  static INLINE bool O3 parse_as_hex(const char* str, uint32_t len, T& result, const char** endptr = nullptr)
+  static QAQ_INLINE bool QAQ_O3 parse_as_hex(const char* str, uint32_t len, T& result, const char** endptr = nullptr)
   {
     static_assert(std::is_integral<T>::value, "T must be integral type");
 
@@ -602,7 +602,7 @@ private:
    * @return false  解析失败
    */
   template <typename T>
-  static INLINE bool O3 parse_as_basis(const char* str, uint32_t len, T& result, int base, const char** endptr = nullptr)
+  static QAQ_INLINE bool QAQ_O3 parse_as_basis(const char* str, uint32_t len, T& result, int base, const char** endptr = nullptr)
   {
     static_assert(std::is_integral<T>::value, "T must be integral type");
 
@@ -744,7 +744,7 @@ private:
    * @return false  解析失败
    */
   template <typename T>
-  static INLINE bool O3 parse_as_fraction(const char* str, uint32_t len, T& result, const char** endptr = nullptr)
+  static QAQ_INLINE bool QAQ_O3 parse_as_fraction(const char* str, uint32_t len, T& result, const char** endptr = nullptr)
   {
     static_assert(std::is_floating_point<T>::value, "T must be a floating point type");
 
@@ -968,7 +968,7 @@ public:
    * @return false  解析失败
    */
   template <typename T>
-  static INLINE bool O3 parse(const char* str, uint32_t len, T& result, int base = 10, const char** endptr = nullptr)
+  static QAQ_INLINE bool QAQ_O3 parse(const char* str, uint32_t len, T& result, int base = 10, const char** endptr = nullptr)
   {
     static_assert(std::is_integral<T>::value, "T must be integral type");
 
@@ -1009,7 +1009,7 @@ public:
    * @return true   解析成功
    * @return false  解析失败
    */
-  static INLINE bool O3 parse(const char* str, uint32_t len, float& result, const char** endptr = nullptr)
+  static QAQ_INLINE bool QAQ_O3 parse(const char* str, uint32_t len, float& result, const char** endptr = nullptr)
   {
     if (str == nullptr)
     {
@@ -1036,7 +1036,7 @@ public:
    * @return true   解析成功
    * @return false  解析失败
    */
-  static INLINE bool O3 parse(const char* str, uint32_t len, double& result, const char** endptr = nullptr)
+  static QAQ_INLINE bool QAQ_O3 parse(const char* str, uint32_t len, double& result, const char** endptr = nullptr)
   {
     if (str == nullptr)
     {

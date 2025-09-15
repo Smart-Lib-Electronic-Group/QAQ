@@ -37,7 +37,7 @@ template <typename Derived>
 class Soft_Timer_Base
 {
   // 禁止拷贝与移动
-  NO_COPY_MOVE(Soft_Timer_Base)
+  QAQ_NO_COPY_MOVE(Soft_Timer_Base)
 
 private:
   /// @brief 定时器句柄
@@ -74,7 +74,7 @@ public:
    * @param  is_auto_activate 是否自动激活
    * @return Derived&         定时器对象
    */
-  Derived& O3 create(const char* name, bool is_auto_activate = false) noexcept
+  Derived& QAQ_O3 create(const char* name, bool is_auto_activate = false) noexcept
   {
     const UINT status = tx_timer_create(&m_timer, const_cast<CHAR*>(name), system_internal::soft_timer_internal::timer_callback<Derived>, reinterpret_cast<ULONG>(static_cast<Derived*>(this)), m_cycle_ticks, m_is_auto_reload ? m_cycle_ticks : 0, is_auto_activate ? TX_AUTO_ACTIVATE : TX_NO_ACTIVATE);
     system::System_Monitor::check_status(status, "Failed to create timer");
@@ -86,7 +86,7 @@ public:
    *
    * @return Derived&         定时器对象
    */
-  Derived& O3 start(void) noexcept
+  Derived& QAQ_O3 start(void) noexcept
   {
     system::System_Monitor::safe_execute(tx_timer_activate, &m_timer);
     return static_cast<Derived&>(*this);
@@ -97,7 +97,7 @@ public:
    *
    * @return Derived&         定时器对象
    */
-  Derived& O3 stop(void) noexcept
+  Derived& QAQ_O3 stop(void) noexcept
   {
     system::System_Monitor::safe_execute(tx_timer_deactivate, &m_timer);
     return static_cast<Derived&>(*this);
@@ -109,7 +109,7 @@ public:
    * @param  cycle_ticks      周期计数
    * @return Derived&         定时器对象
    */
-  Derived& O3 set_cycle_ticks(uint32_t cycle_ticks) noexcept
+  Derived& QAQ_O3 set_cycle_ticks(uint32_t cycle_ticks) noexcept
   {
     m_cycle_ticks = cycle_ticks;
     system::System_Monitor::safe_execute(tx_timer_change, &m_timer, m_cycle_ticks, m_is_auto_reload ? m_cycle_ticks : 0);
@@ -123,7 +123,7 @@ public:
    * @return true             定时器激活
    * @return false            定时器未激活
    */
-  bool O3 is_active(void) const noexcept
+  bool QAQ_O3 is_active(void) const noexcept
   {
     UINT active;
     system::System_Monitor::safe_execute(tx_timer_info_get, &m_timer, TX_NULL, active, TX_NULL, TX_NULL, TX_NULL);
@@ -135,7 +135,7 @@ public:
    *
    * @return uint32_t         定时器当前计数值
    */
-  uint32_t O3 now_tick(void) const noexcept
+  uint32_t QAQ_O3 now_tick(void) const noexcept
   {
     ULONG ticks;
     system::System_Monitor::safe_execute(tx_timer_info_get, &m_timer, TX_NULL, TX_NULL, &ticks, TX_NULL, TX_NULL);
@@ -164,7 +164,7 @@ template <typename Derived>
 class Soft_Timer<Derived> : public system_internal::soft_timer_internal::Soft_Timer_Base<Derived>
 {
   // 禁止拷贝与移动
-  NO_COPY_MOVE(Soft_Timer)
+  QAQ_NO_COPY_MOVE(Soft_Timer)
 
 public:
   /**
@@ -197,7 +197,7 @@ class Soft_Timer<void (*)(Params...), Args...> : public system_internal::soft_ti
   static_assert(sizeof...(Params) == sizeof...(Args), "Function pointer parameter count mismatch");
 
   // 禁止拷贝与移动
-  NO_COPY_MOVE(Soft_Timer)
+  QAQ_NO_COPY_MOVE(Soft_Timer)
 
 private:
   /// @brief 友元函数声明 定时器回调函数模板
@@ -217,7 +217,7 @@ private:
    * @brief  软件定时器 回调函数
    *
    */
-  void O3 callback(void)
+  void QAQ_O3 callback(void)
   {
     m_func(std::get<Args>(m_args)...);
   }
@@ -240,7 +240,7 @@ public:
    * @param  args         回调函数参数
    * @return Soft_Timer&  定时器对象
    */
-  Soft_Timer& O3 set_function(func_t func, Args&&... args) noexcept
+  Soft_Timer& QAQ_O3 set_function(func_t func, Args&&... args) noexcept
   {
     bool is_active = this->is_active();
     if (is_active)
@@ -265,7 +265,7 @@ public:
    * @param  args         回调函数参数
    * @return Soft_Timer&  定时器对象
    */
-  Soft_Timer& O3 operator()(Args&&... args) noexcept
+  Soft_Timer& QAQ_O3 operator()(Args&&... args) noexcept
   {
     m_func(std::get<Args>(m_args)...);
     return *this;
@@ -293,7 +293,7 @@ class Soft_Timer : public system_internal::soft_timer_internal::Soft_Timer_Base<
   static_assert(std::is_same_v<void, std::result_of_t<Lambda(Args...)>>, "Lambda expression must return void");
 
   // 禁止拷贝与移动
-  NO_COPY_MOVE(Soft_Timer)
+  QAQ_NO_COPY_MOVE(Soft_Timer)
 
 private:
   /// @brief 友元函数声明 定时器回调函数模板
@@ -333,7 +333,7 @@ public:
    * @param  args         Lambda表达式参数
    * @return Soft_Timer&  定时器对象
    */
-  Soft_Timer& O3 set_lambda(Lambda&& lambda, Args&&... args) noexcept
+  Soft_Timer& QAQ_O3 set_lambda(Lambda&& lambda, Args&&... args) noexcept
   {
     bool is_active = this->is_active();
     if (is_active)
@@ -358,7 +358,7 @@ public:
    * @param  args         Lambda表达式参数
    * @return Soft_Timer&  定时器对象
    */
-  Soft_Timer& O3 operator()(Args&&... args) noexcept
+  Soft_Timer& QAQ_O3 operator()(Args&&... args) noexcept
   {
     m_lambda(std::get<Args>(m_args)...);
     return *this;

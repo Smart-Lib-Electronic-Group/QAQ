@@ -24,7 +24,7 @@ namespace kernel
 class Read_Write_Lock final
 {
   // 禁止拷贝和移动
-  NO_COPY_MOVE(Read_Write_Lock)
+  QAQ_NO_COPY_MOVE(Read_Write_Lock)
 
 private:
   /// @brief 读写锁 资源访问信号量
@@ -176,7 +176,7 @@ public:
 class Read_Guard
 {
   // 禁止拷贝和移动
-  NO_COPY_MOVE(Read_Guard)
+  QAQ_NO_COPY_MOVE(Read_Guard)
 
 private:
   /// 读写锁
@@ -200,7 +200,7 @@ public:
 class Write_Guard
 {
   // 禁止拷贝和移动
-  NO_COPY_MOVE(Write_Guard)
+  QAQ_NO_COPY_MOVE(Write_Guard)
 
 private:
   /// 读写锁

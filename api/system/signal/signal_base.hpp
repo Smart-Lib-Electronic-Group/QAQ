@@ -61,7 +61,7 @@ class Signal_Data_Base;
 class Signal_Base
 {
   // 禁止拷贝和移动
-  NO_COPY_MOVE(Signal_Base)
+  QAQ_NO_COPY_MOVE(Signal_Base)
 
 public:
   /**
@@ -89,7 +89,7 @@ class Signal_Manager_Base
   friend class Signal_Data_Base;
 
   // 禁止拷贝和移动
-  NO_COPY_MOVE(Signal_Manager_Base)
+  QAQ_NO_COPY_MOVE(Signal_Manager_Base)
 
 private:
   virtual void deallocate(void* ptr, uint32_t size) {}

@@ -56,9 +56,9 @@ enum class Dma_Priority : uint8_t
  */
 enum class Dma_Data_Size : uint8_t
 {
-  Byte,      /* 比特 */
-  Half_Word, /* 半字节 */
-  Word       /* 字节 */
+  Byte,      /*  8bit 比特 */
+  Half_Word, /* 16bit 半字节 */
+  Word       /* 32bit 字节 */
 };
 
 /**
@@ -89,7 +89,7 @@ template <Dma_Direction direction, Dma_Mode mode = Dma_Mode::Normal, Dma_Priorit
 class Dma_Config
 {
   // 禁止拷贝和移动
-  NO_COPY_MOVE(Dma_Config)
+  QAQ_NO_COPY_MOVE(Dma_Config)
 
 public:
   /**
@@ -324,7 +324,7 @@ namespace dma_internal
 class Dma_Base : public interrupt::Interrupt_Device
 {
   // 禁止拷贝和移动
-  NO_COPY_MOVE(Dma_Base)
+  QAQ_NO_COPY_MOVE(Dma_Base)
 
 protected:
   /// @brief DMA 通道 类型声明
@@ -487,42 +487,15 @@ private:
    */
   interrupt::Interrupt_Func_t get_direct_func(uint8_t channel)
   {
-    switch (channel)
+    static constexpr interrupt::Interrupt_Func_t func[] = { irq_direct_handler<0>, irq_direct_handler<1>, irq_direct_handler<2>, irq_direct_handler<3>, irq_direct_handler<4>, irq_direct_handler<5>, irq_direct_handler<6>, irq_direct_handler<7>, irq_direct_handler<8>, irq_direct_handler<9>, irq_direct_handler<10>, irq_direct_handler<11>, irq_direct_handler<12>, irq_direct_handler<13>, irq_direct_handler<14>, irq_direct_handler<15> };
+
+    if (channel < 16)
     {
-      case 0 :
-        return irq_direct_handler<0>;
-      case 1 :
-        return irq_direct_handler<1>;
-      case 2 :
-        return irq_direct_handler<2>;
-      case 3 :
-        return irq_direct_handler<3>;
-      case 4 :
-        return irq_direct_handler<4>;
-      case 5 :
-        return irq_direct_handler<5>;
-      case 6 :
-        return irq_direct_handler<6>;
-      case 7 :
-        return irq_direct_handler<7>;
-      case 8 :
-        return irq_direct_handler<8>;
-      case 9 :
-        return irq_direct_handler<9>;
-      case 10 :
-        return irq_direct_handler<10>;
-      case 11 :
-        return irq_direct_handler<11>;
-      case 12 :
-        return irq_direct_handler<12>;
-      case 13 :
-        return irq_direct_handler<13>;
-      case 14 :
-        return irq_direct_handler<14>;
-      case 15 :
-        return irq_direct_handler<15>;
-      default :
-        return nullptr;
+      return func[channel];
+    }
+    else
+    {
+      return nullptr;
     }
   }
 
@@ -534,42 +507,15 @@ private:
    */
   interrupt::Interrupt_Func_t get_queue_func(uint8_t channel)
   {
-    switch (channel)
+    static constexpr interrupt::Interrupt_Func_t func[] = { irq_queue_handler<0>, irq_queue_handler<1>, irq_queue_handler<2>, irq_queue_handler<3>, irq_queue_handler<4>, irq_queue_handler<5>, irq_queue_handler<6>, irq_queue_handler<7>, irq_queue_handler<8>, irq_queue_handler<9>, irq_queue_handler<10>, irq_queue_handler<11>, irq_queue_handler<12>, irq_queue_handler<13>, irq_queue_handler<14>, irq_queue_handler<15> };
+
+    if (channel < 16)
     {
-      case 0 :
-        return irq_queue_handler<0>;
-      case 1 :
-        return irq_queue_handler<1>;
-      case 2 :
-        return irq_queue_handler<2>;
-      case 3 :
-        return irq_queue_handler<3>;
-      case 4 :
-        return irq_queue_handler<4>;
-      case 5 :
-        return irq_queue_handler<5>;
-      case 6 :
-        return irq_queue_handler<6>;
-      case 7 :
-        return irq_queue_handler<7>;
-      case 8 :
-        return irq_queue_handler<8>;
-      case 9 :
-        return irq_queue_handler<9>;
-      case 10 :
-        return irq_queue_handler<10>;
-      case 11 :
-        return irq_queue_handler<11>;
-      case 12 :
-        return irq_queue_handler<12>;
-      case 13 :
-        return irq_queue_handler<13>;
-      case 14 :
-        return irq_queue_handler<14>;
-      case 15 :
-        return irq_queue_handler<15>;
-      default :
-        return nullptr;
+      return func[channel];
+    }
+    else
+    {
+      return nullptr;
     }
   }
 
@@ -726,6 +672,8 @@ public:
 
     return transferred_size;
   }
+
+  void set
 
   /**
    * @brief  DMA 类 关闭传输

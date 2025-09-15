@@ -22,7 +22,7 @@ namespace device_internal
 class Storage_Device_Base : public Device_Base
 {
   // 禁止拷贝和移动
-  NO_COPY_MOVE(Storage_Device_Base)
+  QAQ_NO_COPY_MOVE(Storage_Device_Base)
 
 protected:
   /**

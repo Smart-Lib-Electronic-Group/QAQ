@@ -95,7 +95,7 @@ protected:
     {
       if (0 == storage.heap.ref_count->load())
       {
-        QString_Memory_Pool::instance().free(storage.heap.data, storage.heap.capacity);
+        QString_Memory_Pool::instance().deallocate(storage.heap.data, storage.heap.capacity);
         QString_Memory_Pool::instance().counter_free(storage.heap.ref_count);
       }
       else
@@ -116,7 +116,7 @@ protected:
       {
         QString_Base new_string;
         new_string.storage.heap.capacity = QString_Memory_Pool::instance().get_capacity(storage.heap.capacity);
-        new_string.storage.heap.data     = QString_Memory_Pool::instance().malloc(new_string.storage.heap.capacity);
+        new_string.storage.heap.data     = QString_Memory_Pool::instance().allocate(new_string.storage.heap.capacity);
         new_string.storage.heap.size     = storage.heap.size;
         new_string.storage.sso.is_sso    = 0;
 
@@ -143,7 +143,7 @@ protected:
       {
         QString_Base new_string;
         new_string.storage.heap.capacity = QString_Memory_Pool::instance().get_capacity(new_capacity + 1);
-        new_string.storage.heap.data     = QString_Memory_Pool::instance().malloc(new_string.storage.heap.capacity);
+        new_string.storage.heap.data     = QString_Memory_Pool::instance().allocate(new_string.storage.heap.capacity);
         new_string.storage.heap.size     = storage.sso.size;
         new_string.storage.sso.is_sso    = 0;
 
@@ -170,7 +170,7 @@ protected:
         {
           QString_Base new_string;
           new_string.storage.heap.capacity = QString_Memory_Pool::instance().get_capacity(new_capacity + 1);
-          new_string.storage.heap.data     = QString_Memory_Pool::instance().malloc(new_string.storage.heap.capacity);
+          new_string.storage.heap.data     = QString_Memory_Pool::instance().allocate(new_string.storage.heap.capacity);
           new_string.storage.heap.size     = keep_data ? storage.heap.size : 0;
           new_string.storage.sso.is_sso    = 0;
 
@@ -302,7 +302,7 @@ protected:
     else
     {
       storage.heap.capacity = QString_Memory_Pool::instance().get_capacity(len + 1);
-      storage.heap.data     = QString_Memory_Pool::instance().malloc(storage.heap.capacity);
+      storage.heap.data     = QString_Memory_Pool::instance().allocate(storage.heap.capacity);
 
       if (str && 0 < len)
       {
@@ -334,7 +334,7 @@ protected:
     else
     {
       storage.heap.capacity = QString_Memory_Pool::instance().get_capacity(count + 1);
-      storage.heap.data     = QString_Memory_Pool::instance().malloc(storage.heap.capacity);
+      storage.heap.data     = QString_Memory_Pool::instance().allocate(storage.heap.capacity);
       memset(storage.heap.data, ch, count);
       storage.heap.data[count] = '\0';
       storage.heap.size        = count;

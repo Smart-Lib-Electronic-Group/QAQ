@@ -21,7 +21,7 @@ template <typename... Args>
 class Signal : public system_internal::signal_internal::Signal_Base
 {
   // 禁止拷贝和移动
-  NO_COPY_MOVE(Signal)
+  QAQ_NO_COPY_MOVE(Signal)
 
 public:
   /**
@@ -41,7 +41,7 @@ public:
    * @return Signal_Error_Code  连接结果
    */
   template <typename Receiver, typename Handler>
-  INLINE Signal_Error_Code O3 connect(Receiver* receiver, Handler handler, Connection_Type type = Connection_Type::Auto_Connection)
+  QAQ_INLINE Signal_Error_Code QAQ_O3 connect(Receiver* receiver, Handler handler, Connection_Type type = Connection_Type::Auto_Connection)
   {
     /// @note 类型检查 接收对象是否符合要求
     static_assert(std::is_base_of_v<system_internal::object_internal::Object_Base, Receiver>, "Receiver must be a subclass of Object_Base");
@@ -60,7 +60,7 @@ public:
    * @return Signal_Error_Code  连接结果
    */
   template <typename Handler>
-  INLINE Signal_Error_Code O3 connect(Handler handler)
+  QAQ_INLINE Signal_Error_Code QAQ_O3 connect(Handler handler)
   {
     using function_type = void (*)(Args...);
     /// @note 类型检查 连接函数是否符合要求
@@ -79,7 +79,7 @@ public:
    * @return uint32_t 移除连接数量
    */
   template <typename Receiver, typename Handler>
-  INLINE uint32_t O3 disconnect(Receiver* receiver, Handler handler)
+  QAQ_INLINE uint32_t QAQ_O3 disconnect(Receiver* receiver, Handler handler)
   {
     /// @note 类型检查 接收对象是否符合要求
     static_assert(std::is_base_of_v<system_internal::object_internal::Object_Base, Receiver>, "Receiver must be a subclass of Object_Base");
@@ -98,7 +98,7 @@ public:
    * @return uint32_t 移除连接数量
    */
   template <typename Handler>
-  INLINE uint32_t O3 disconnect(Handler handler)
+  QAQ_INLINE uint32_t QAQ_O3 disconnect(Handler handler)
   {
     using function_type = void (*)(Args...);
     /// @note 类型检查 连接函数是否符合要求
@@ -114,10 +114,10 @@ public:
    * @param  timeout            超时时间
    * @return Signal_Error_Code  发送结果
    */
-  INLINE Signal_Error_Code O3 emit(Args&... args, uint32_t timeout = TX_WAIT_FOREVER)
+  QAQ_INLINE Signal_Error_Code QAQ_O3 emit(Args&... args, uint32_t timeout = TX_WAIT_FOREVER)
   {
     system_internal::signal_internal::Signal_Semaphore* sem = nullptr;
-    Signal_Error_Code                            ret = system_internal::signal_internal::Signal_Manager::instance().emit(&sem, this, std::forward<Args>(args)...);
+    Signal_Error_Code                                   ret = system_internal::signal_internal::Signal_Manager::instance().emit(&sem, this, std::forward<Args>(args)...);
 
     if (sem)
     {
@@ -147,10 +147,10 @@ public:
    * @param  timeout            超时时间
    * @return Signal_Error_Code  发送结果
    */
-  INLINE Signal_Error_Code O3 emit(Args&&... args, uint32_t timeout = TX_WAIT_FOREVER)
+  QAQ_INLINE Signal_Error_Code QAQ_O3 emit(Args&&... args, uint32_t timeout = TX_WAIT_FOREVER)
   {
     system_internal::signal_internal::Signal_Semaphore* sem = nullptr;
-    Signal_Error_Code                            ret = system_internal::signal_internal::Signal_Manager::instance().emit(&sem, this, std::forward<Args>(args)...);
+    Signal_Error_Code                                   ret = system_internal::signal_internal::Signal_Manager::instance().emit(&sem, this, std::forward<Args>(args)...);
 
     if (sem)
     {
@@ -180,10 +180,10 @@ public:
    * @param  timeout            超时时间
    * @return Signal_Error_Code  发送结果
    */
-  INLINE Signal_Error_Code O3 operator()(Args&... args, uint32_t timeout = TX_WAIT_FOREVER)
+  QAQ_INLINE Signal_Error_Code QAQ_O3 operator()(Args&... args, uint32_t timeout = TX_WAIT_FOREVER)
   {
     system_internal::signal_internal::Signal_Semaphore* sem = nullptr;
-    Signal_Error_Code                            ret = system_internal::signal_internal::Signal_Manager::instance().emit(&sem, this, std::forward<Args>(args)...);
+    Signal_Error_Code                                   ret = system_internal::signal_internal::Signal_Manager::instance().emit(&sem, this, std::forward<Args>(args)...);
 
     if (sem)
     {
@@ -214,10 +214,10 @@ public:
    * @param  timeout            超时时间
    * @return Signal_Error_Code  发送结果
    */
-  INLINE Signal_Error_Code O3 operator()(Args&&... args, uint32_t timeout = TX_WAIT_FOREVER)
+  QAQ_INLINE Signal_Error_Code QAQ_O3 operator()(Args&&... args, uint32_t timeout = TX_WAIT_FOREVER)
   {
     system_internal::signal_internal::Signal_Semaphore* sem = nullptr;
-    Signal_Error_Code                            ret = system_internal::signal_internal::Signal_Manager::instance().emit(&sem, this, std::forward<Args>(args)...);
+    Signal_Error_Code                                   ret = system_internal::signal_internal::Signal_Manager::instance().emit(&sem, this, std::forward<Args>(args)...);
 
     if (sem)
     {
